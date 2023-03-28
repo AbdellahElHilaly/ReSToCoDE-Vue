@@ -40,6 +40,8 @@ const reserve = () => {
 </template>
 
 
+
+
 <style scoped>
 .card {
     background-color: black;
