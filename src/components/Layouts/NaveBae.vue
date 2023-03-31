@@ -1,7 +1,5 @@
 <script setup>
-
     import { RouterLink } from 'vue-router';
-
 </script>
 
 <template>
@@ -32,7 +30,7 @@
                         <a class="nav-link" href="#Menu">Menu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
+                        <a class="nav-link" href="#Reservation">Reservation</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">About</a>

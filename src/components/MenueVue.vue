@@ -45,6 +45,12 @@
     border-radius: 0.5rem;
 }
 
+.menu-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 @media only screen and (min-width: 768px) {
     .menue-container {
         grid-template-columns: repeat(2, 1fr);
@@ -60,11 +66,6 @@
     }
 }
 
-.menu-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
 
 </style>

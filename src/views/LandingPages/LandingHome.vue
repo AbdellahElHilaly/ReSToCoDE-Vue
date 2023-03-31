@@ -1,6 +1,7 @@
 <script setup>
-    import AppHeader from '@/components/HeaderVue.vue'
+    import AppHeader from '@/components/Layouts/HeaderVue.vue'
     import AppMenu from '@/components/MenueVue.vue'
+    import ReservationList from "@/components/ReservationList.vue";
 </script>
 
 
@@ -8,6 +9,7 @@
     <div class="app">
         <AppHeader />
         <AppMenu />
+        <ReservationList />
     </div>
 </template>
 

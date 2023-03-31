@@ -1,5 +1,8 @@
 <script setup>
+
+
 import { ref } from 'vue'
+
 
 const reserved = ref(false)
 
@@ -20,19 +23,17 @@ const reserve = () => {
             <p class="card-text">Plat principal </p>
             
             <div class="reserve">
-                <!-- <button class="btn-reserve">Reserve</button>
-                <span class="icone">
-                    <i class="fas fa-check d-none"></i>
-                    <i class="fas fa-times"></i>
-                </span> -->
-
-                <!-- change icone by click  -->
 
                 <button class="btn-reserve" @click="reserve">Reserve</button>
-                <span class="icone">
-                    <i class="fas fa-check" v-if="reserved"></i>
-                    <i class="fas fa-times" v-else></i>
-                </span>
+
+                <div class="d-flex">
+                    <span class="icone-info">
+                        <i class="fas fa-info-circle "></i>
+                    </span>
+                    <span class="icone-reserv">
+                        <i class="fas fa-utensils " :class="{selected: reserved}"></i>
+                    </span>
+                </div>
 
             </div>
         </div>
@@ -82,43 +83,54 @@ const reserve = () => {
 }
 
 .btn-reserve {
-    background-color: orange;
+    background-color: orangered;
     border: none;
     border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
     color: white;
     font-size: 1rem;
     font-weight: bold;
+    padding: 0.5rem 1rem;
     text-transform: uppercase;
     letter-spacing: 0.1rem;
     cursor: pointer;
 }
 
 .btn-reserve:hover {
-    background-color: #ff8c00;
+    background-color: rgb(221, 65, 8);
 }
 
 .btn-reserve:active {
-    background-color: #ff8c00;
+    background-color: orangered;
     box-shadow: 0 0 0.5rem 0.5rem #ff8c00;
+    transform: translateY(4px);
 }
 
-.icone {
+
+.selected {
+    color: orangered;
+}
+
+.icone-info {
+    color: white;
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+
+.icone-info:hover {
+    transform: scale(1.2);
+}
+
+.icone-info:active {
+    color: orangered;
+}
+
+
+
+.icone-reserv {
     color: white;
     font-size: 1.5rem;
 }
 
-.icone i {
-    margin-left: 0.5rem;
-}
-
-.icone i:hover {
-    color: orange;
-}
-
-.icone i:active {
-    color: orange;
-}
 
 
 
@@ -145,11 +157,7 @@ const reserve = () => {
     
 }
 
-@media screen and (max-width: 1200px) {
-    .card {
-        width: calc(33.333vw - 1.5rem);
-    }
-}
+
 
 
 

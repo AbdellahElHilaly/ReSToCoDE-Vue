@@ -1,37 +1,70 @@
 <script setup>
     import { RouterLink } from 'vue-router';
     import { ref } from 'vue'
+    import Alert from '@/components/Layouts/AlertVue.vue'
 
     const email = ref('')
     const password = ref('')
 
+    
+    const showAlert = ref(false)
+
+
     const login = () => {
+
+    const alertElement = document.querySelector(".alert");
+    alertElement.classList.remove("fadeOut");
+    alertElement.classList.remove("hide");
+    alertElement.classList.add("show");
         
     }
+
 </script>
 
 <template>
-<section>
-<div class="login-form">
-    <h2>Login</h2>
-    <form>
-        <div class="form-group">
-            <label for="email">Email address</label>
-            <input type="email" class="form-control" id="email" v-model="email">
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" v-model="password">
-        </div>
-        <button type="submit" class="btn btn-primary" @click.prevent="login">Login</button>
-    </form>
 
-    <p class="mt-2">Don't have an account? <RouterLink to="/signup">Sign Up</RouterLink></p>
-</div>
+
+<section>
+    
+    <div class="alert-container" >
+        <Alert type="error" > 
+            <p>test</p>
+        </Alert>
+    </div>
+
+
+    <div class="login-form">
+        <h2>Login</h2>
+        <form>
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" v-model="email" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" v-model="password" autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary" @click.prevent="login">Login</button>
+        </form>
+
+        <p class="mt-2">Don't have an account? <RouterLink to="/signup">Sign Up</RouterLink></p>
+    </div>
+
 </section>
+
+
 </template>
 
 <style scoped>
+
+
+.alert-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
 section {
     width: 100vw;
     height: 100vh;

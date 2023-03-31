@@ -1,6 +1,6 @@
 <script setup>
 
-  import AppNave from '@/components/NaveBae.vue'
+  import AppNave from '@/components/Layouts/NaveBae.vue'
 
 </script>
 
@@ -57,7 +57,7 @@
   /* hieght  */
   /* default nave 60px + border link 2px  => nave fix position not calcule*/
   #intro-example{
-    height:calc(100vh ); 
+    height:calc(100vh - 2px); 
   }
 
   i{
