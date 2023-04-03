@@ -1,54 +1,58 @@
 <script setup>
-import { computed, ref } from 'vue';
-
-
 
 const props = defineProps({
     type: {
         type: String,
         default: 'info',
     },
-    dismissable: {
-        type: Boolean,
-        default: true,
-    },
+
+    visibility:{
+        type: String,
+        default: 'hide',
+    }
 
 
-    
-    
 });
 
-const alertClasses = computed(() => {
-    return {
-        'alert-success': props.type === 'success',
-        'alert-danger': props.type === 'error',
-        'alert-info': props.type === 'info',
-        'alert-warning': props.type === 'warning',
-    };
-});
+const alertTypes = {
+    success: 'alert-success',
+    error: 'alert-danger',
+    info: 'alert-info',
+    warning: 'alert-warning',
+};
 
-const dismissed = ref(false);
+const alertVisibility = {
+    show: 'show',
+    hide: 'fadeOut hide',
+}
+
 
 const dismiss = () => {
     const alertElement = document.querySelector(".alert");
     alertElement.classList.add("fadeOut");
     setTimeout(() => {
-
         alertElement.classList.remove("show");
         alertElement.classList.add("hide");
-        
     }, 500);
 };
 
 
 </script>
 
+
+
 <template>
-    <div class="alert hide " :class="alertClasses" >
-        <slot></slot>
-        <button  class="close" @click="dismiss"> 
-            <span aria-hidden="true">&times;</span>
-        </button>
+    <div :class="['alert', alertTypes[type] , alertVisibility[visibility]]">
+        <slot name="message"></slot>
+
+        <div class="alert-actions">
+            <div class="slot-link-container">
+                <slot name="link"></slot>
+            </div>
+            <button  class="close" @click="dismiss"> 
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     </div>
 </template>
 
@@ -58,59 +62,85 @@ const dismiss = () => {
 <style scoped>
 
 .alert {
-    position: relative;
+    position: absolute;
+    top: 1%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    margin:  0 1%;
     padding: 0.75rem 1.25rem;
-    margin-bottom: 1rem;
     border: 1px solid transparent;
     border-radius: 0.25rem;
-    color: #fff;
-    background-color: #007bff;
-    border-color: #007bff;
     animation: fadeIn 0.5s ease;
 }
+
+.alert-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.slot-link-container {
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+}
+
+
 
 .alert-success {
     background-color: #28a745;
     border-color: #28a745;
+    color: black;
 }
 
 .alert-danger {
     background-color: #dc3545;
     border-color: #dc3545;
+    color: black;
 }
 
 .alert-info {
     background-color: #17a2b8;
     border-color: #17a2b8;
+    color: white;
 }
 
 .alert-warning {
     background-color: #ffc107;
     border-color: #ffc107;
+    color: black;
 }
 
 .close {
-    padding: 0;
-    color: #fff;
+    padding: 0.75rem 1.25rem;
+    margin: -0.75rem -1.25rem -0.75rem auto;
     background-color: transparent;
     border: 0;
+}
+
+.close i {
     font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1;
-    text-shadow: 0 1px 0 #fff;
-    opacity: 0.5;
+    color: #fff;
 }
-
-.close:hover {
+.close i:hover {
     color: #000;
-    text-decoration: none;
-    opacity: 0.75;
+    animation: rotate 0.5s linear;
 }
 
-.close:focus {
-    outline: 0;
+.alert.show {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
+.alert.hide {
+    display: none;
+}
+
+.alert.fadeOut {
+    animation: fadeOut 0.5s ease forwards;
+}
 
 @keyframes fadeIn {
     0% {
@@ -123,9 +153,7 @@ const dismiss = () => {
     }
 }
 
-.alert.fadeOut {
-    animation: fadeOut 0.5s ease forwards;
-}
+
 
 @keyframes fadeOut {
     0% {
@@ -138,16 +166,39 @@ const dismiss = () => {
     }
 }
 
-/* add 2 classes for show and not show alert  */
-
-.alert.show {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
-.alert.hide {
-    display: none;
+/* responsive */
+
+@media screen and (max-width: 768px) {
+    .alert {
+        margin: 0 5%;
+    }
+
+    .alert-actions {
+        flex-direction: column;
+    }
+
+    .slot-link-container {
+        margin-bottom: 1rem;
+        margin-right: 0;
+        margin-left: 2px;
+    }
+
+    .close {
+        margin: -0.75rem -1.25rem -0.75rem auto;
+    }
+
+    
+
+
 }
 
 

@@ -2,7 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LandingPages from '../views/LandingPages/LandingHome.vue'
 import LogIn from '@/views/Auth/LogIn.vue'
 import SignUp from '@/views/Auth/SignUp.vue'
-import TestApi from '@/components/TestApi.vue'
+import ActivateAccount from '@/views/Auth/ActivationForm.vue'
+import UserProfile from '@/views/Auth/UserProfile.vue'
+import RessetPassword from '@/views/Auth/RessetPassword.vue'
+
+
+
 import Error from '@/views/Errors/ErrorVue.vue'
 
 const router = createRouter({
@@ -24,14 +29,24 @@ const router = createRouter({
       component: SignUp
     },
     {
-      path: '/testapi',
-      name: 'TestApi',
-      component: TestApi
-    },
-    {
       path: '/error',
       name: 'Error',
       component: Error
+    },
+    {
+      path: '/activate',
+      name: 'ActivationForm',
+      component: ActivateAccount
+    },
+    {
+      path: '/profile',
+      name: 'UserProfile',
+      component: UserProfile
+    },
+    {
+      path: '/reset',
+      name: 'RessetPassword',
+      component: RessetPassword
     }
   ]
 })

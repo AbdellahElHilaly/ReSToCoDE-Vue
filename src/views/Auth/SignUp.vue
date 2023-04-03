@@ -9,50 +9,50 @@
     import Alert from "@/components/Layouts/AlertVue.vue";
     import Spinner from "@/components/Layouts/SpinnerView.vue";
 
+
     const alertContainer = ref(null);
     const spinnerContainer = ref(null);
 
     const user = ref(new User());
     const authConsumer = new AuthConsumer();
 
-    
     const alertMessage = ref(null);
+    const alertType = ref("info");
+    const alertVisibility  = ref("hide");
 
 
-    
 
-
-    const singUp = () => {
+    const signUp = () => {
 
         loadSpinner();
-        // hideAlert();
 
         authConsumer
             .signUp(user.value)
             .then((responce) => {
                 hideSpinner();
+                if(responce.errors)
+                    alertType.value = "error";
+                else{
+                    alertType.value = "warning";
+                    user.value.id = responce.Body.id;
+                }
+
+                if(localStorage.getItem("user-redy-to-activate")){
+                    localStorage.removeItem("user-redy-to-activate");
+                    localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
+                }
+                else{
+                    localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
+                }
+
                 loadAlert(responce.message);
+                
             })
             .catch((error) => {
                 hideSpinner();
+                alertType.value = "error";
                 loadAlert(error.message);
             });
-
-            /*
-
-            what is chaining here?
-
-            response : 
-            chatshing is a way to call a function after another function has been called
-
-            translate arabic : 
-
-            الشيكينج هو طريقة للتعامل مع الدالة بعد انتهاء الدالة الاولى
-
-            
-
-            */
-            
     };
 
 
@@ -62,19 +62,14 @@
 
 
     function loadAlert(message) {
-        alertMessage.value = message;
-        alertContainer.value.classList.remove("hide");
-        alertContainer.value.classList.add("show");
-    }
-
         
+        alertMessage.value = message;
 
-    function hideAlert() {
-        alertContainer.value.classList.add("fadeOut");
-        setTimeout(() => {
-            alertContainer.value.classList.remove("show");
-            alertContainer.value.classList.add("hide");
-        }, 500);
+        alertContainer.value.classList.remove("hide");
+        alertContainer.value.classList.remove("fadeOut");
+        alertContainer.value.classList.add("show");
+        alertVisibility.value = "show";
+
     }
 
     function hideSpinner() {
@@ -99,13 +94,19 @@
 
 <template>
     <section>
-        <div class="alert-container" >
 
+        <Alert :visibility="alertVisibility"  :type="alertType" >
+            <template #message>
+                {{alertMessage}}
+            </template>
+            <template #link v-if="alertType == 'warning'">
+                <RouterLink to="activate">
+                    <button class="btn btn-primary">Activate</button>
+                </RouterLink>
+            </template>
+            
+        </Alert>
 
-            <Alert type="error">
-                <p>{{ alertMessage }}</p>
-            </Alert>
-        </div>
         <div class="spinner-container hide" >
             <Spinner />
         </div>
@@ -127,10 +128,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control"   autocomplete="current-password" v-model="user.password_confirmation">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" class="form-control"  autocomplete="current-password" v-model="user.password_confirmation">
                 </div>
-                <button type="submit" class="btn btn-primary" @click.prevent="singUp" >Login</button>
+                <button type="submit" class="btn btn-primary" @click.prevent="signUp" >Login</button>
             </form>
 
             <p class="mt-2">Already have an account? <RouterLink to="/login">Log In</RouterLink></p>
@@ -143,18 +144,11 @@
 <style scoped>
 
 
-.alert-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-}
 
 section {
     width: 100vw;
     height: 100vh;
-    background-image: url('https://cw33.com/wp-content/uploads/sites/8/2022/04/asian-restaurant.jpg');
+    background-image: url('../../assets/images/image-globale.png');
     background-size: cover;
     display: flex;
     justify-content: center;

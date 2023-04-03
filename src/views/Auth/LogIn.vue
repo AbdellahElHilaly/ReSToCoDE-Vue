@@ -1,23 +1,123 @@
 <script setup>
-    import { RouterLink } from 'vue-router';
-    import { ref } from 'vue'
-    import Alert from '@/components/Layouts/AlertVue.vue'
+    import { RouterLink } from "vue-router";
+    import { ref, onMounted } from "vue";
 
-    const email = ref('')
-    const password = ref('')
+    import User from "@/Api/models/User.js";
+    import AuthConsumer from "@/Api/Services/AuthConsumer.js";
+
+    import Alert from "@/components/Layouts/AlertVue.vue";
+    import Spinner from "@/components/Layouts/SpinnerView.vue";
+    import {AUTH_TOKEN} from '@/Api/Config/config.js';
 
     
-    const showAlert = ref(false)
+
+
+
+
+
+
+    const alertContainer = ref(null);
+    const spinnerContainer = ref(null);
+
+    const user = ref(new User());
+    const authConsumer = new AuthConsumer();
+
+    const alertMessage = ref(null);
+    const alertType = ref("info");
+    const alertVisibility  = ref("hide");
+
+    const routUrl = ref('/login');
+    const routText = ref(null);
+
 
 
     const login = () => {
 
-    const alertElement = document.querySelector(".alert");
-    alertElement.classList.remove("fadeOut");
-    alertElement.classList.remove("hide");
-    alertElement.classList.add("show");
+        loadSpinner();
+
+        authConsumer
+            .login(user.value)
+            .then((responce) => {
+                hideSpinner();
+                if(responce.errors)
+                    alertType.value = "error";
+                else{
+                    if(responce.Header.status) {
+                        alertType.value = "success";
+                        user.value.id = responce.Body.id;
+                        const token = responce.Body.token;
+
+                        localStorage.setItem(AUTH_TOKEN, token);
+
+                        routUrl.value = "/";
+                        routText.value = "Home";
+                    }
+                    else{
+                        alertType.value = "error";
+                        if(responce.message.includes("Your account is not activated")){
+                            routUrl.value = "/activate";
+                            routText.value = "Activate";
+                            alertType.value = "warning";
+                            user.value.id = responce.Body.id;
+                            user.value.name = responce.Body.name;
+                            
+                            if(localStorage.getItem("user-redy-to-activate")){
+                                localStorage.removeItem("user-redy-to-activate");
+                                localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
+                            }
+                            else{
+                                localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
+                            }
+                        }
+
+                    }
+                }
+
+                if(localStorage.getItem("user-redy-to-activate")){
+                    localStorage.removeItem("user-redy-to-activate");
+                    localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
+                }
+                else{
+                    localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
+                }
+
+                loadAlert(responce.message);
+                
+            })
+            .catch((error) => {
+                hideSpinner();
+                alertType.value = "error";
+                loadAlert(error.message);
+            });
+        };
+
+    function loadAlert(message) {
         
+        alertMessage.value = message;
+
+        alertContainer.value.classList.remove("hide");
+        alertContainer.value.classList.remove("fadeOut");
+        alertContainer.value.classList.add("show");
+        alertVisibility.value = "show";
+
     }
+
+    function hideSpinner() {
+        spinnerContainer.value.classList.remove("show");
+        spinnerContainer.value.classList.add("hide");
+    }
+
+    function loadSpinner() {
+        spinnerContainer.value.classList.remove("hide");
+        spinnerContainer.value.classList.add("show");
+    }
+
+    onMounted(() => {
+        alertContainer.value = document.querySelector(".alert");
+        spinnerContainer.value = document.querySelector(".spinner-container");
+    });
+
+
 
 </script>
 
@@ -26,10 +126,24 @@
 
 <section>
     
-    <div class="alert-container" >
-        <Alert type="error" > 
-            <p>test</p>
-        </Alert>
+    
+    <Alert :visibility="alertVisibility"  :type="alertType" >
+        <template #message>
+            {{alertMessage}}
+        </template>
+        <template #link v-if="alertType != 'error'">
+            <RouterLink :to="routUrl">
+                <button class="btn btn-primary">
+                    {{routText}}
+                </button>
+            </RouterLink>
+        </template>
+    
+        
+    </Alert>
+
+    <div class="spinner-container hide" >
+        <Spinner />
     </div>
 
 
@@ -38,16 +152,21 @@
         <form>
             <div class="form-group">
                 <label for="email">Email address</label>
-                <input type="email" class="form-control" id="email" v-model="email" autocomplete="email">
+                <input type="email" class="form-control" id="email"  autocomplete="email" v-model="user.email">
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" v-model="password" autocomplete="current-password">
+                <input type="password" class="form-control" id="password" autocomplete="current-password" v-model="user.password">
             </div>
             <button type="submit" class="btn btn-primary" @click.prevent="login">Login</button>
         </form>
 
-        <p class="mt-2">Don't have an account? <RouterLink to="/signup">Sign Up</RouterLink></p>
+        <div class="forget-signup-container">
+            <p class="mt-2"> <RouterLink to="/signup">Sign Up</RouterLink></p>
+            <p class="mt-2"><RouterLink to="/reset">Forget Password</RouterLink></p>
+        </div>
+        
+        
     </div>
 
 </section>
@@ -58,17 +177,11 @@
 <style scoped>
 
 
-.alert-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-}
+
 section {
     width: 100vw;
     height: 100vh;
-    background-image: url('https://cw33.com/wp-content/uploads/sites/8/2022/04/asian-restaurant.jpg');
+    background-image: url('../../assets/images/image-globale.png');
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -105,4 +218,44 @@ input[type="password"] {
 button[type="submit"] {
     width: 100%;
 }
+
+.spinner-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    
+}
+
+.forget-signup-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.forget-signup-container p {
+    margin: 0;
+}
+
+
+
+
+
+
+.hide {
+    display: none;
+}
+
+.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
 </style>
