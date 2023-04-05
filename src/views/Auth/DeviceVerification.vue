@@ -23,29 +23,26 @@
     const routVisibility  = ref(false);
 
     const user = ref(null);
-    user.value = JSON.parse(localStorage.getItem("user-redy-to-activate"));
+    user.value = JSON.parse(localStorage.getItem("user-redy-to-verfiy-device"));
 
 
-    const activat = () => {
+    const trushDevice = () => {
 
         loadSpinner();
 
         authConsumer
-            .activateAccount(code.value)
+            .trustDevice(code.value)
             .then((responce) => {
                 hideSpinner();
+                console.log(responce);
                 if(responce.errors)  alertType.value = "error";
                 else{
                     if(responce.Header.status) {
-                        if(responce.message.includes("Account activated successfully")){
+                        if(responce.message.includes("Device trushed successfully")){
                             alertType.value = "success";
-                            localStorage.removeItem("user-redy-to-activate");
+                            localStorage.removeItem("user-redy-to-verfiy-device");
                             routVisibility.value = true;
                         }
-                    }
-                    else{
-                        alertType.value = "warning";
-                        routVisibility.value = true;
                     }
                 }
                 loadAlert(responce.message);
@@ -84,10 +81,6 @@
 
 
 
-    
-
-
-
     function loadAlert(message) {
         alertMessage.value = message;
         alertContainer.value.classList.remove("hide");
@@ -95,8 +88,6 @@
         alertContainer.value.classList.add("show");
         alertVisibility.value = "show";
     }
-
-
 
 
     function hideSpinner() {
@@ -145,7 +136,7 @@
                 <!-- check is user e -->
                 <h2 class="title" v-if="user">Welcome {{user.name}}</h2>
                 <h2 class="title" v-else>Welcome</h2>
-                <p class="message">Enter the activation code sent to your email</p>
+                <p class="message">Enter the verification code sent to your email</p>
                 <div class="resend-container">
                     <p class="message">Didn't receive the code?</p>
                     <i class="icon-resend fas fa-redo" @click="resend"></i>
@@ -160,7 +151,7 @@
                     <label for="right">right code</label>
                     <input type="number" class="form-control"  autocomplete="right" v-model="code.right">
                 </div>
-                <button type="submit" class="btn btn-primary" @click.prevent="activat" >Submit</button>
+                <button type="submit" class="btn btn-primary" @click.prevent="trushDevice" >Submit</button>
             </form>
 
             

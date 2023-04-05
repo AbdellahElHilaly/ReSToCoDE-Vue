@@ -10,12 +10,20 @@
 
     import Alert from "@/components/Layouts/AlertVue.vue";
     import Spinner from "@/components/Layouts/SpinnerView.vue";
+    import FormeVue from "@/components/Layouts/FormeVue.vue";
 
 
     const alertContainer = ref(null);
     const spinnerContainer = ref(null);
 
     const authConsumer = new AuthConsumer();
+
+    const serverConected = ref(false)
+    authConsumer.testServer()
+            .then((responce) => {
+                hideSpinner();
+                serverConected.value = true;
+            });
 
     const alertMessage = ref(null);
     const alertType = ref("info");
@@ -25,7 +33,6 @@
     const email_exist = ref(false);
 
     const ressetModel= ref(new RessetModel());
-
 
 
 
@@ -139,6 +146,7 @@
     onMounted(() => {
         alertContainer.value = document.querySelector(".alert");
         spinnerContainer.value = document.querySelector(".spinner-container");
+        hideSpinner();
     });
 
 
@@ -167,8 +175,9 @@
             <Spinner />
         </div>
 
-        <div class="activation-form">
-            <div class="activation-title">
+        <FormeVue  v-if="serverConected">
+            <template #title>
+                <div class="activation-title">
                 <h2 class="title" v-if="ressetModel">Welcome {{ressetModel.name}}</h2>
                 <h2 class="title" v-else>Welcome</h2>
                 <p class="message" v-if="!email_exist">Please enter your email address to receive a password reset code</p>
@@ -178,8 +187,10 @@
                     <i class="icon-resend fas fa-redo" @click="resend"></i>
                 </div>
             </div>
-            <form >
+            </template>
 
+
+            <template #form>
                 <div v-if="!email_exist" class="form-group">
                     <label for="email">Email address</label>
                     <input type="email" class="form-control" autocomplete="email" v-model="ressetModel.email">
@@ -205,10 +216,13 @@
                 
                 <button v-if="!email_exist" type="submit" class="btn btn-primary" @click.prevent="forgotPassword">Send</button>
                 <button v-if="email_exist" type="submit" class="btn btn-primary" @click.prevent="resetPassword">Reset</button>
-            </form>
+            </template>
 
-            
-        </div>
+            <template #footer>
+            </template>
+
+        </FormeVue>
+
     </section>
 </template>
 
@@ -226,13 +240,7 @@ section {
     align-items: center;
 }
 
-.activation-form {
-    width: 400px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
+
 
 .activation-title {
     text-align: center;

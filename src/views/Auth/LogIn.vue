@@ -6,10 +6,11 @@
     import AuthConsumer from "@/Api/Services/AuthConsumer.js";
 
     import Alert from "@/components/Layouts/AlertVue.vue";
+    import FormeVue from "@/components/Layouts/FormeVue.vue";
+
     import Spinner from "@/components/Layouts/SpinnerView.vue";
     import {AUTH_TOKEN} from '@/Api/Config/config.js';
 
-    
 
 
 
@@ -20,7 +21,17 @@
     const spinnerContainer = ref(null);
 
     const user = ref(new User());
+
+    
+
     const authConsumer = new AuthConsumer();
+    const serverConected = ref(false)
+    authConsumer.testServer()
+            .then((responce) => {
+                hideSpinner();
+                serverConected.value = true;
+            });
+            
 
     const alertMessage = ref(null);
     const alertType = ref("info");
@@ -38,16 +49,27 @@
         authConsumer
             .login(user.value)
             .then((responce) => {
+
                 hideSpinner();
-                if(responce.errors)
+
+
+                if(responce.errors){
                     alertType.value = "error";
+                }
                 else{
+                    
                     if(responce.Header.status) {
                         alertType.value = "success";
                         user.value.id = responce.Body.id;
                         const token = responce.Body.token;
 
                         localStorage.setItem(AUTH_TOKEN, token);
+
+                        // Extract token from HttpOnly cookie
+                        const tokenRegex = /(?<=token=)[^;]*/;
+                        const httpOnlytoken = response.headers.get('set-cookie').match(tokenRegex)[0];
+                        console.log(httpOnlytoken);
+
 
                         routUrl.value = "/";
                         routText.value = "Home";
@@ -58,7 +80,7 @@
                             routUrl.value = "/activate";
                             routText.value = "Activate";
                             alertType.value = "warning";
-                            user.value.id = responce.Body.id;
+                            user.value.email = responce.Body.email;
                             user.value.name = responce.Body.name;
                             
                             if(localStorage.getItem("user-redy-to-activate")){
@@ -69,6 +91,24 @@
                                 localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
                             }
                         }
+
+                        else if(responce.message.includes("not match you should verify")){
+                            routUrl.value = "/verify";
+                            routText.value = "verify";
+                            alertType.value = "warning";
+                            user.value.email = responce.Body.email;
+                            user.value.name = responce.Body.name;
+                            console.log(responce);
+                        }
+
+                        if(localStorage.getItem("user-redy-to-verfiy-device")){
+                                localStorage.removeItem("user-redy-to-verfiy-device");
+                                localStorage.setItem("user-redy-to-verfiy-device", JSON.stringify(user.value));
+                        }
+                        else{
+                            localStorage.setItem("user-redy-to-verfiy-device", JSON.stringify(user.value));
+                        }
+
 
                     }
                 }
@@ -115,6 +155,7 @@
     onMounted(() => {
         alertContainer.value = document.querySelector(".alert");
         spinnerContainer.value = document.querySelector(".spinner-container");
+        loadSpinner();
     });
 
 
@@ -147,9 +188,13 @@
     </div>
 
 
-    <div class="login-form">
-        <h2>Login</h2>
-        <form>
+
+    <FormeVue v-if="serverConected">
+        <template #title>
+            <h1>Login</h1>
+        </template>
+
+        <template #form>
             <div class="form-group">
                 <label for="email">Email address</label>
                 <input type="email" class="form-control" id="email"  autocomplete="email" v-model="user.email">
@@ -159,15 +204,19 @@
                 <input type="password" class="form-control" id="password" autocomplete="current-password" v-model="user.password">
             </div>
             <button type="submit" class="btn btn-primary" @click.prevent="login">Login</button>
-        </form>
 
-        <div class="forget-signup-container">
-            <p class="mt-2"> <RouterLink to="/signup">Sign Up</RouterLink></p>
-            <p class="mt-2"><RouterLink to="/reset">Forget Password</RouterLink></p>
-        </div>
-        
-        
-    </div>
+        </template>
+
+        <template #footer>
+            
+            <div class="forget-signup-container">
+                <p class="mt-2"> <RouterLink to="/signup">Sign Up</RouterLink></p>
+                <p class="mt-2"><RouterLink to="/reset">Forget Password</RouterLink></p>
+            </div>
+        </template>
+
+    </FormeVue>
+
 
 </section>
 
@@ -181,19 +230,11 @@
 section {
     width: 100vw;
     height: 100vh;
-    background-image: url('../../assets/images/image-globale.png');
+    background-image: url('../../assets/images/image-activation.jpg');
     background-size: cover;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.login-form {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    width: 400px;
 }
 
 .form-group {
@@ -254,6 +295,8 @@ button[type="submit"] {
     justify-content: center;
     align-items: center;
 }
+
+
 
 
 

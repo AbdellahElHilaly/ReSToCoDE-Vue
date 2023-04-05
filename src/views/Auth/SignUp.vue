@@ -8,6 +8,7 @@
 
     import Alert from "@/components/Layouts/AlertVue.vue";
     import Spinner from "@/components/Layouts/SpinnerView.vue";
+    import FormeVue from "@/components/Layouts/FormeVue.vue";
 
 
     const alertContainer = ref(null);
@@ -15,6 +16,13 @@
 
     const user = ref(new User());
     const authConsumer = new AuthConsumer();
+
+    const serverConected = ref(false)
+    authConsumer.testServer()
+            .then((responce) => {
+                hideSpinner();
+                serverConected.value = true;
+            });
 
     const alertMessage = ref(null);
     const alertType = ref("info");
@@ -44,6 +52,8 @@
                 else{
                     localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
                 }
+
+                console.log(localStorage.getItem("user-redy-to-activate"));
 
                 loadAlert(responce.message);
                 
@@ -85,6 +95,7 @@
     onMounted(() => {
         alertContainer.value = document.querySelector(".alert");
         spinnerContainer.value = document.querySelector(".spinner-container");
+        loadSpinner();
     });
 
 
@@ -111,9 +122,13 @@
             <Spinner />
         </div>
 
-        <div class="sign-up-form">
-            <h2>Sign Up</h2>
-            <form >
+        
+        <FormeVue v-if="serverConected">
+            <template #title>
+                <h1>Sign Up</h1>
+            </template>
+
+            <template #form>
                 <div class="form-group">
                     <label for="name">full name</label>
                     <input type="text" class="form-control" authocomplete="name" v-model=user.name>
@@ -131,13 +146,17 @@
                     <label for="confirm-password">Confirm Password</label>
                     <input type="password" class="form-control"  autocomplete="current-password" v-model="user.password_confirmation">
                 </div>
+
                 <button type="submit" class="btn btn-primary" @click.prevent="signUp" >Login</button>
-            </form>
+            </template>
 
-            <p class="mt-2">Already have an account? <RouterLink to="/login">Log In</RouterLink></p>
+            <template #footer>
+                <p class="mt-2">Already have an account? <RouterLink to="/login">Log In</RouterLink></p>
+            </template>
 
-            
-        </div>
+        </FormeVue>
+
+
     </section>
 </template>
 
@@ -148,20 +167,14 @@
 section {
     width: 100vw;
     height: 100vh;
-    background-image: url('../../assets/images/image-globale.png');
+    background-image: url('../../assets/images/image-activation.jpg');
     background-size: cover;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.sign-up-form {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    width: 400px;
-}
+
 
 .form-group {
     margin-bottom: 20px;

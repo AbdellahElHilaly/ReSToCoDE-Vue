@@ -1,5 +1,13 @@
 <script setup>
     import { RouterLink } from 'vue-router';
+    import {AUTH_TOKEN} from '@/Api/Config/config.js';
+
+    const isLogged = () => {
+        return localStorage.getItem(AUTH_TOKEN) ? true : false;
+    }
+
+
+
 </script>
 
 <template>
@@ -37,7 +45,7 @@
                     </li>
                 </ul>
 
-                <div class="d-flex auth">
+                <div class="d-flex auth" v-if="!isLogged()">
                     <router-link to="/login">
                         <i class="fas fa-user me-2"></i>
                         <span>Log in</span>
@@ -49,6 +57,13 @@
                     </router-link>
                     
                 </div>
+
+                <div class="d-flex auth" v-else>
+                    <router-link to="/profile">
+                        <i class="fas fa-user me-2"></i>
+                        <span>Profile</span>
+                    </router-link>
+                </div>  
             </div>
 
 

@@ -1,5 +1,6 @@
 import { RESTOCODE_URL  , RESTOCODE_AUTH_URL , AUTH_TOKEN} from '@/Api/Config/config.js';
 
+
 /*
 
 Route::group(['prefix' => 'auth'], function () {
@@ -17,7 +18,6 @@ Route::group(['prefix' => 'auth'], function () {
 
 });
 
-
 */
 
 
@@ -30,6 +30,24 @@ export default class AuthConsumer {
         this.token = localStorage.getItem(AUTH_TOKEN);
     }
 
+    async testServer() {
+        try {
+            const response = await fetch(`${RESTOCODE_URL}/test`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+            });
+
+            const responseData = await response.json();
+            console.log(responseData);
+            return responseData;
+        } catch (error) {
+            console.error(error);
+            window.location.href = "/500";
+        }
+    }
 
     async signUp(data) {
         const response = await fetch(`${this.url}/register`, {
@@ -37,6 +55,7 @@ export default class AuthConsumer {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${this.token}`,
             },
             body: JSON.stringify(data),
         });
@@ -56,15 +75,30 @@ export default class AuthConsumer {
         
     }
 
+    async trustDevice(data) {
+        const response = await fetch(`${this.url}/trust?left=${data.left}&right=${data.right}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+        });
+        return response.json();
+        
+    }
+
     async login(data) {
         const response = await fetch(`${this.url}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${this.token}`,
             },
             body: JSON.stringify(data),
         });
+        
+        
 
         return response.json();
     }
@@ -76,6 +110,7 @@ export default class AuthConsumer {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${this.token}`,
             },
             body: JSON.stringify(data),
         });
@@ -90,11 +125,14 @@ export default class AuthConsumer {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${this.token}`,
-
-
-                
             },
         });
+
+        if (response.status === 401) {
+            localStorage.removeItem(AUTH_TOKEN);
+            window.location.href = '/login';
+        }
+
         return response.json();
     }
 
@@ -104,25 +142,77 @@ export default class AuthConsumer {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${this.token}`,
             },
             body: JSON.stringify(data),
         });
+        if (response.status === 401) {
+            localStorage.removeItem(AUTH_TOKEN);
+            window.location.href = '/login';
+        }
 
         return response.json();
+
     }
 
+    
+
     async ressetPassword(data) {
-        
         const response = await fetch(`${this.url}/ressetpassword?left=${data.left}&right=${data.right}&password=${data.password}&password_confirmation=${data.password_confirmation}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${this.token}`,
             },
         });
+        if (response.status === 401) {
+            localStorage.removeItem(AUTH_TOKEN);
+            window.location.href = '/login';
+        }
 
         return response.json();
     }
+
+
+
+    async editProfile(data) {
+        const response = await fetch(`${this.url}/edite`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${this.token}`,
+            },
+            body: JSON.stringify(data),
+        });
+        if (response.status === 401) {
+            localStorage.removeItem(AUTH_TOKEN);
+            window.location.href = '/login';
+        }
+
+        return response.json();
+
+    }
+    async logOut() {
+        const response = await fetch(`${this.url}/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${this.token}`,
+            },
+        });
+        if (response.status === 401) {
+            localStorage.removeItem(AUTH_TOKEN);
+            window.location.href = '/login';
+        }
+
+        return response.json();
+
+    }
+
+
     
     
 

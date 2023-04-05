@@ -4,6 +4,7 @@ export default class User {
         this.id = 0;
         this.name = '';
         this.email = '';
+        this.current_password = '';
         this.password = '';
         this.password_confirmation = '';
         this.rule_id = 1;
