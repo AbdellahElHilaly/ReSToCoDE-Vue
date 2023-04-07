@@ -8,6 +8,8 @@ import PlatsPerformance from '@/components/dashboard/PlatsPerformance.vue';
 import NewStatistic from '@/components/dashboard/NewStatistic.vue';
 import TotalStatistic from '@/components/dashboard/TotalStatistic.vue';
 
+import MealCrud from './CRUDS/MealCrud.vue';
+
 
 
 </script>
@@ -25,6 +27,7 @@ import TotalStatistic from '@/components/dashboard/TotalStatistic.vue';
         <div class="container pt-4">
             <GraphVue />
             <PlatsPerformance />
+            <MealCrud />
             <NewStatistic />
             <TotalStatistic />
         </div>

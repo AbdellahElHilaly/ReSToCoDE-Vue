@@ -1,4 +1,5 @@
 <script setup>
+    
     import { ref, onMounted } from "vue";
 
 
@@ -23,7 +24,11 @@
     const alertType = ref("info");
     const alertVisibility  = ref("hide");
 
-
+    authConsumer.testServer()
+            .then((responce) => {
+                hideSpinner();
+                serverConected.value = true;
+            });
 
     const fetchProfile = async () => {
         const response = await authConsumer.getProfile();
@@ -139,6 +144,7 @@
     onMounted(() => {
         alertContainer.value = document.querySelector(".alert");
         spinnerContainer.value = document.querySelector(".spinner-container");
+        loadSpinner();
     });
 
 

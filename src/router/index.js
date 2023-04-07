@@ -25,7 +25,19 @@ const router = createRouter({
     {
       path: '/login',
       name: 'Login',
-      component: LogIn
+      component: LogIn,
+
+      // if the user is already logged in, redirect to the dashboard
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('auth-token');
+        if (token) {
+          next('/dashboard');
+        } else {
+          next();
+        }
+      }
+      
+
     },
     {
       path: '/signup',
@@ -64,14 +76,6 @@ const router = createRouter({
       path: '/reset',
       name: 'RessetPassword',
       component: RessetPassword,
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('auth-token');
-        if (token) {
-          next();
-        } else {
-          next('/login');
-        }
-      }
     },
     {
       path: '/verify',

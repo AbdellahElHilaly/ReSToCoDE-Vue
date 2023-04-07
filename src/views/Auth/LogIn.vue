@@ -65,12 +65,6 @@
 
                         localStorage.setItem(AUTH_TOKEN, token);
 
-                        // Extract token from HttpOnly cookie
-                        const tokenRegex = /(?<=token=)[^;]*/;
-                        const httpOnlytoken = response.headers.get('set-cookie').match(tokenRegex)[0];
-                        console.log(httpOnlytoken);
-
-
                         routUrl.value = "/";
                         routText.value = "Home";
                     }
@@ -99,6 +93,11 @@
                             user.value.email = responce.Body.email;
                             user.value.name = responce.Body.name;
                             console.log(responce);
+                        }
+                        else if(responce.message.includes("You are already logged in")){
+                            routUrl.value = "/";
+                            routText.value = "Home";
+                            alertType.value = "warning";
                         }
 
                         if(localStorage.getItem("user-redy-to-verfiy-device")){

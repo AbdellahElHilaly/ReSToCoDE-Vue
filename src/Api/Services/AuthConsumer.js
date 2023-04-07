@@ -37,17 +37,19 @@ export default class AuthConsumer {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                },
+                }
             });
-
+    
             const responseData = await response.json();
             console.log(responseData);
             return responseData;
+    
         } catch (error) {
             console.error(error);
             window.location.href = "/500";
         }
-    }
+    }    
+
 
     async signUp(data) {
         const response = await fetch(`${this.url}/register`, {
@@ -97,8 +99,6 @@ export default class AuthConsumer {
             },
             body: JSON.stringify(data),
         });
-        
-        
 
         return response.json();
     }
