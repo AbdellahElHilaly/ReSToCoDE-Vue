@@ -1,6 +1,5 @@
 <script setup>
     import { ref , reactive  } from "vue";
-    import Fuse from 'fuse.js';
     import Swal from 'sweetalert2'
     import Algorithme from '@/Helpers/Algorithme.js';
 
@@ -215,8 +214,6 @@
 
 
 <template>
-
-
 
     <section>
         <div class="table-responsive">

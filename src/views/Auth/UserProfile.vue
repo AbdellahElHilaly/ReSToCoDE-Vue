@@ -1,150 +1,78 @@
 <script setup>
-    
-    import { ref, onMounted } from "vue";
 
+    import { RouterLink } from "vue-router";
+    import router from '@/router';
+    import { ref , onMounted ,reactive} from "vue";
 
     import User from "@/Api/models/User.js";
+
     import AuthConsumer from "@/Api/Services/AuthConsumer.js";
 
-    import Alert from "@/components/Layouts/AlertVue.vue";
+    import Alert from "@/components/Layouts/Alert.vue";
     import Spinner from "@/components/Layouts/SpinnerView.vue";
     import FormeVue from "@/components/Layouts/FormeVue.vue";
 
-    import {AUTH_TOKEN} from '@/Api/Config/config.js';
 
-    const alertContainer = ref(null);
-    const spinnerContainer = ref(null);
+    import { useAppSpinnerStore } from '@/store/appSpinnerStore.js'
+    import { useAppAlertStore } from '@/store/appAlerStore.js'
+    import { useAppUserStore } from '@/store/appUserStore.js'
 
-    const profile = ref(null);
 
     const authConsumer = new AuthConsumer();
-    const user = ref(new User());
-
-    const alertMessage = ref(null);
-    const alertType = ref("info");
-    const alertVisibility  = ref("hide");
-
-    authConsumer.testServer()
-            .then((responce) => {
-                hideSpinner();
-                serverConected.value = true;
-            });
+    const userProfile = ref(null);
+    const userEdit = reactive(new User());
 
     const fetchProfile = async () => {
         const response = await authConsumer.getProfile();
-        profile.value = response.Body;
-        user.value.email = profile.value.email;
-        user.value.id = profile.value.id;
+        useAppUserStore().setUser(response.Body);
+        userProfile.value = useAppUserStore().getUser
+
     };
 
 
-    fetchProfile();
-    const isEdit = ref(false);
+
+    let isEdit = ref(false);
 
     const updateProfile = async () => {
+        useAppSpinnerStore().show("profile");
         //check if the password and password confirmation empty if yes remove them from the user object
-        if(user.value.password == "" && user.value.password_confirmation == ""){
-            delete user.value.password;
-            delete user.value.password_confirmation;
+        if(userEdit.password == "" && userEdit.password_confirmation == ""){
+            delete userEdit.password;
+            delete userEdit.password_confirmation;
         }
-        loadSpinner();
+        console.log(userEdit);
+        
         authConsumer
-            .editProfile(user.value)
+            .editProfile(userEdit)
             .then((responce) => {
-
-                hideSpinner();
-
-                if(responce.errors){
-                    alertType.value = "error";
-                }
-                else{
-                    
-                    if(responce.Header.status) {
-                        alertType.value = "success";
-                        user.value.id = responce.Body.id;
-                        const token = responce.Body.token;
-                        localStorage.setItem(AUTH_TOKEN, token);
-                        fetchProfile();
-                        isEdit.value = false;
-
-                        user.value = new User();
-                    }
-                    else{
-                        alertType.value = "error";
-                    }
-                }
-
-                loadAlert(responce.message);
+                useAppSpinnerStore().hide();
+                useAppAlertStore().show("profile" , responce.message);
+                userProfile.value = useAppUserStore().getUser
             })
             .catch((error) => {
-                hideSpinner();
-                alertType.value = "error";
-                loadAlert(error.message);
+                console.error(error);
             });
         
     };
 
     const logOut = () => {
-        loadSpinner();
+        useAppSpinnerStore().show("profile");
         authConsumer
             .logOut()
             .then((responce) => {
-
-                hideSpinner();
-
-                if(responce.errors){
-                    alertType.value = "error";
-                }
-                else{
-                    
-                    if(responce.Header.status) {
-                        alertType.value = "success";
-                        localStorage.removeItem(AUTH_TOKEN);
-                        //redirect to login page after 1 second
-                        setTimeout(() => {
-                            window.location.href = "/";
-                        }, 1000);
-                    }
-                    else{
-                        alertType.value = "error";
-                    }
-                }
-
-                loadAlert(responce.message);
+                useAppSpinnerStore().hide();
+                useAppAlertStore().show("profile" , responce.message);
+                setTimeout(() => {
+                    router.push('/login');
+                }, 800);
             })
             .catch((error) => {
-                hideSpinner();
-                alertType.value = "error";
-                loadAlert(error.message);
+                console.error(error);
         });
     };
 
-    
-    function loadAlert(message) {
-        
-        alertMessage.value = message;
-
-        alertContainer.value.classList.remove("hide");
-        alertContainer.value.classList.remove("fadeOut");
-        alertContainer.value.classList.add("show");
-        alertVisibility.value = "show";
-
-    }
-
-    function hideSpinner() {
-        spinnerContainer.value.classList.remove("show");
-        spinnerContainer.value.classList.add("hide");
-    }
-
-    function loadSpinner() {
-        spinnerContainer.value.classList.remove("hide");
-        spinnerContainer.value.classList.add("show");
-    }
-
     onMounted(() => {
-        alertContainer.value = document.querySelector(".alert");
-        spinnerContainer.value = document.querySelector(".spinner-container");
-        loadSpinner();
+        fetchProfile();
     });
 
 
@@ -155,18 +83,16 @@
     
     <section>
 
-        <Alert :visibility="alertVisibility"  :type="alertType" >
-            <template #message>
-                {{alertMessage}}
-            </template>
-        </Alert>
-
-        <div class="spinner-container hide" >
-            <Spinner />
-        </div>
-
 
         <FormeVue>
+
+            <template #alert>
+                <Alert v-if="useAppAlertStore().getStatus == 'profile'" />
+            </template>
+            <template #spinner>
+                <Spinner v-if="useAppSpinnerStore().getStatus == 'profile'" :trenspBackg="true" />
+            </template>
+
             <template #title>
                 <div class="hed-container">
                     <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User Image">
@@ -185,40 +111,40 @@
                 <div class="form-group">
                     <label for="name">Full Name:</label>
                     <span v-if = "!isEdit">
-                        <span v-if="profile">{{ profile.name }}</span>
+                        <span v-if="userProfile">{{ userProfile.name }}</span>
                         <i v-else class="fas fa-spinner fa-spin"></i>
                     </span>
-                    <input v-else type="text"  placeholder="Full Name" class="form-control"  v-model="user.name">
+                    <input v-else type="text"  placeholder="Full Name" class="form-control"  v-model="userEdit.name">
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address:</label>
                     <span v-if = "!isEdit">
-                        <span v-if="profile">{{ profile.email }}</span>
+                        <span v-if="userProfile">{{ userProfile.email }}</span>
                         <i v-else class="fas fa-spinner fa-spin"></i>
                     </span>
-                    <input v-else type="email"  class="form-control" :value="profile.email" disabled>
+                    <input v-else type="email"  class="form-control" :value="userProfile.email" disabled>
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
                     <span v-if = "!isEdit">
-                        <span v-if="profile">**********</span>
+                        <span v-if="userProfile">**********</span>
                         <i v-else class="fas fa-spinner fa-spin"></i>
                     </span>
-                    <input v-if = "isEdit" type="password" placeholder="Current Password" class="form-control" v-model="user.current_password">
+                    <input v-if = "isEdit" type="password" placeholder="Current Password" class="form-control" v-model="userEdit.current_password">
                 </div>
                 <div v-if = "isEdit" class="form-group">
                     <label for="password">new Password:</label>
-                    <input type="password"  placeholder="new Password" class="form-control" v-model="user.password">
+                    <input type="password"  placeholder="new Password" class="form-control" v-model="userEdit.password">
                 </div>
                 <div v-if = "isEdit" class="form-group">
                     <label for="password">Confirm:</label>
-                    <input type="password"  placeholder="Confirm new Password" class="form-control" v-model="user.password_confirmation">
+                    <input type="password"  placeholder="Confirm new Password" class="form-control" v-model="userEdit.password_confirmation">
                 </div>
 
                 <div class="form-group">
                     <label for="role">Role:</label>
                     <span >
-                        <span v-if="profile">{{ profile.role }}</span>
+                        <span v-if="userProfile">{{ userProfile.role }}</span>
                         <i v-else class="fas fa-spinner fa-spin"></i>
                     </span>
                 </div>

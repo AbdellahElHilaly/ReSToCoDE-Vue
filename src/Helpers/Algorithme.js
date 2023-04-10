@@ -1,9 +1,9 @@
 
 export default class Algorithme {
+
     static search(text, key) {
         const vowels = ["a", "e", "i", "o", "u", "y"];
         const alphabet = "bcdfghjklmnpqrstvwxz";
-
         // check if the key have vowels and alphabet
 
         if(key.split("").some(char => vowels.includes(char)) && !key.split("").some(char => alphabet.includes(char))) {
@@ -15,4 +15,6 @@ export default class Algorithme {
 
         return textWithoutVowels.includes(keyWithoutVowels);
     }
+
 }
+

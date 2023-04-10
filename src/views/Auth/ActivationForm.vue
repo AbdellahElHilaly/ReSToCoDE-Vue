@@ -1,119 +1,54 @@
-
 <script setup>
-    import { ref, onMounted } from "vue";
+
     import { RouterLink } from "vue-router";
+    import { ref, onMounted } from "vue";
 
-
-    import ActivationCode from "@/Api/models/ActivationCode.js";
     import AuthConsumer from "@/Api/Services/AuthConsumer.js";
 
-    import Alert from "@/components/Layouts/AlertVue.vue";
+    import Alert from "@/components/Layouts/Alert.vue";
     import Spinner from "@/components/Layouts/SpinnerView.vue";
+    import FormeVue from "@/components/Layouts/FormeVue.vue";
+
+    import { useAppUserStore } from '@/store/appUserStore.js'
+    import { useAppSpinnerStore } from '@/store/appSpinnerStore.js'
+    import { useAppAlertStore } from '@/store/appAlerStore.js'
 
 
-    const alertContainer = ref(null);
-    const spinnerContainer = ref(null);
-
-    const code = ref(new ActivationCode());
     const authConsumer = new AuthConsumer();
+    let user = useAppUserStore().getUser;
+    console.log(user);
+    
 
-    const alertMessage = ref(null);
-    const alertType = ref("info");
-    const alertVisibility  = ref("hide");
-    const routVisibility  = ref(false);
-
-    const user = ref(null);
-    user.value = JSON.parse(localStorage.getItem("user-redy-to-activate"));
 
 
     const activat = () => {
 
-        loadSpinner();
+        useAppSpinnerStore().show("activation");
 
         authConsumer
-            .activateAccount(code.value)
+            .activateAccount(user)
             .then((responce) => {
-                hideSpinner();
-                if(responce.errors)  alertType.value = "error";
-                else{
-                    if(responce.Header.status) {
-                        if(responce.message.includes("Account activated successfully")){
-                            alertType.value = "success";
-                            localStorage.removeItem("user-redy-to-activate");
-                            routVisibility.value = true;
-                        }
-                    }
-                    else{
-                        alertType.value = "warning";
-                        routVisibility.value = true;
-                    }
-                }
-                loadAlert(responce.message);
+                useAppSpinnerStore().hide();
+                useAppAlertStore().show("activation" , responce.message);
             })
             .catch((error) => {
-                hideSpinner();
-                alertType.value = "error";
-                loadAlert(error.message);
+                console.error(error);
             });
     };
 
 
     const resend = () => {
-
-        loadSpinner();
-
+        useAppSpinnerStore().show("activation");
         authConsumer
-            .resendActivationMail(user.value)
+            .resendActivationMail(user)
             .then((responce) => {
-                hideSpinner();
-                if(responce.errors)  alertType.value = "error";
-                else{
-                    if(responce.Header.status) {
-                        alertType.value = "success";
-                    }
-                    else    alertType.value = "warning";
-                }
-                loadAlert(responce.message);
+                useAppSpinnerStore().hide();
+                useAppAlertStore().show("activation" , responce.message);
             })
             .catch((error) => {
-                hideSpinner();
-                alertType.value = "error";
-                loadAlert(error.message);
+                console.error(error);
             });
     };
-
-
-
-    
-
-
-
-    function loadAlert(message) {
-        alertMessage.value = message;
-        alertContainer.value.classList.remove("hide");
-        alertContainer.value.classList.remove("fadeOut");
-        alertContainer.value.classList.add("show");
-        alertVisibility.value = "show";
-    }
-
-
-
-
-    function hideSpinner() {
-        spinnerContainer.value.classList.remove("show");
-        spinnerContainer.value.classList.add("hide");
-    }
-
-    function loadSpinner() {
-        spinnerContainer.value.classList.remove("hide");
-        spinnerContainer.value.classList.add("show");
-    }
-
-    onMounted(() => {
-        alertContainer.value = document.querySelector(".alert");
-        spinnerContainer.value = document.querySelector(".spinner-container");
-    });
-
 
 
 
@@ -123,48 +58,41 @@
 <template>
     <section>
 
-        <div class="alert-container" >
-            <Alert :visibility="alertVisibility"  :type="alertType" >
-                <template #message>
-                    {{alertMessage}}
-                </template>
-                <template #link v-if="routVisibility">
-                    <RouterLink to="/login">
-                        <button class="btn btn-primary">Login</button>
-                    </RouterLink>
+        <FormeVue >
+            <template #alert>
+                <Alert v-if="useAppAlertStore().getStatus == 'activation'" />
             </template>
-            </Alert>
-        </div>
+            <template #spinner>
+                <Spinner v-if="useAppSpinnerStore().getStatus == 'activation'" :trenspBackg="true" />
+            </template>
 
-        <div class="spinner-container hide" >
-            <Spinner />
-        </div>
-
-        <div class="activation-form">
-            <div class="activation-title">
+            <template #title>
+                <div class="activation-title">
                 <!-- check is user e -->
                 <h2 class="title" v-if="user">Welcome {{user.name}}</h2>
                 <h2 class="title" v-else>Welcome</h2>
                 <p class="message">Enter the activation code sent to your email</p>
-                <div class="resend-container">
+                <div class="resend-container" v-if="user.email">
                     <p class="message">Didn't receive the code?</p>
                     <i class="icon-resend fas fa-redo" @click="resend"></i>
                 </div>
             </div>
-            <form >
+            </template>
+
+            <template #form>
                 <div class="form-group">
                     <label for="left">left code</label>
-                    <input type="number" class="form-control" authocomplete="left" v-model="code.left">
+                    <input type="number" class="form-control" authocomplete="left" v-model="user.left">
                 </div>
                 <div class="form-group">
                     <label for="right">right code</label>
-                    <input type="number" class="form-control"  autocomplete="right" v-model="code.right">
+                    <input type="number" class="form-control"  autocomplete="right" v-model="user.right">
                 </div>
                 <button type="submit" class="btn btn-primary" @click.prevent="activat" >Submit</button>
-            </form>
+            </template>
 
-            
-        </div>
+        </FormeVue>
+
     </section>
 </template>
 

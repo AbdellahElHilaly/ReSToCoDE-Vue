@@ -8,6 +8,8 @@ export default class User {
         this.password = '';
         this.password_confirmation = '';
         this.rule_id = 1;
+        this.left = 0;
+        this.right = 0;
     }
 }
 

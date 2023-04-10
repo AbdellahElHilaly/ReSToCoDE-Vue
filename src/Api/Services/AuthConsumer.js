@@ -1,4 +1,9 @@
 import { RESTOCODE_URL  , RESTOCODE_AUTH_URL , AUTH_TOKEN} from '@/Api/Config/config.js';
+import { useAppAlertStore } from '@/store/appAlerStore.js'
+import { useAppUserStore } from '@/store/appUserStore.js'
+import User from '@/Api/models/User.js'
+import router from '@/router';
+
 
 
 /*
@@ -30,50 +35,58 @@ export default class AuthConsumer {
         this.token = localStorage.getItem(AUTH_TOKEN);
     }
 
-    async testServer() {
-        try {
-            const response = await fetch(`${RESTOCODE_URL}/test`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                }
-            });
-    
-            const responseData = await response.json();
-            console.log(responseData);
-            return responseData;
-    
-        } catch (error) {
-            console.error(error);
-            window.location.href = "/500";
-        }
-    }    
-
-
-    async signUp(data) {
+    async signUp(userData) {
+        
         const response = await fetch(`${this.url}/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${this.token}`,
+                // 'Authorization': `Bearer ${this.token}`,
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(userData),
         });
 
-        return response.json();
+        let data = await response.json();
+        if (response.status === 200) {
+            useAppAlertStore().setCode(data.Header.code)
+            useAppUserStore().setUser(data.Body);
+            useAppAlertStore().setLink('/activate')
+        } else {
+            useAppAlertStore().setCode(response.status);
+        }
+
+
+        return data;
     }
 
-    async activateAccount(data) {
-        const response = await fetch(`${this.url}/activate?left=${data.left}&right=${data.right}`, {
+
+
+    async activateAccount(userData) {
+        const response = await fetch(`${this.url}/activate?left=${userData.left}&right=${userData.right}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                // 'Authorization': `Bearer ${this.token}`,
             },
         });
-        return response.json();
+        let data = await response.json();
+        if (response.status === 200){
+            useAppAlertStore().setCode(data.Header.code)
+
+            if(data.Header.code ===100 || data.Header.status){
+                    setTimeout(() => {
+                        router.push('/login');
+                    }, 800);
+            }
+
+        } else {
+            useAppAlertStore().setCode(response.status);
+        }
+
+
+        return data;
         
     }
 
@@ -85,9 +98,10 @@ export default class AuthConsumer {
                 'Accept': 'application/json',
             },
         });
+        useAppAlertStore().setCode(response.status);
         return response.json();
-        
     }
+
 
     async login(data) {
         const response = await fetch(`${this.url}/login`, {
@@ -95,12 +109,33 @@ export default class AuthConsumer {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${this.token}`,
+                // 'Authorization': `Bearer ${this.token}`,
             },
             body: JSON.stringify(data),
         });
+        
+        data = await response.json();
+        if (response.status === 200) {
 
-        return response.json();
+            useAppAlertStore().setCode(data.Header.code)
+
+            if(data.Header.code === 400) useAppUserStore().setUser(data.Body);
+
+            if(data.Header.status){ 
+                localStorage.setItem(AUTH_TOKEN, data.Body.token);
+                setTimeout(() => {
+                    router.push('/');
+                }, 1000);
+            } 
+            else if(data.Header.code === 400) useAppAlertStore().setLink('/activate')
+
+            
+        } else {
+            useAppAlertStore().setCode(response.status);
+        }
+
+        return data;
+
     }
 
 
@@ -114,6 +149,7 @@ export default class AuthConsumer {
             },
             body: JSON.stringify(data),
         });
+        useAppAlertStore().setCode(response.status);
 
         return response.json();
     }
@@ -130,8 +166,9 @@ export default class AuthConsumer {
 
         if (response.status === 401) {
             localStorage.removeItem(AUTH_TOKEN);
-            window.location.href = '/login';
+            router.push('/login');
         }
+        useAppAlertStore().setCode(response.status);
 
         return response.json();
     }
@@ -148,7 +185,7 @@ export default class AuthConsumer {
         });
         if (response.status === 401) {
             localStorage.removeItem(AUTH_TOKEN);
-            window.location.href = '/login';
+            router.push('/login');
         }
 
         return response.json();
@@ -168,15 +205,15 @@ export default class AuthConsumer {
         });
         if (response.status === 401) {
             localStorage.removeItem(AUTH_TOKEN);
-            window.location.href = '/login';
+            router.push('/login');
         }
-
+        useAppAlertStore().setCode(response.status);
         return response.json();
     }
 
 
 
-    async editProfile(data) {
+    async editProfile(userData) {
         const response = await fetch(`${this.url}/edite`, {
             method: 'POST',
             headers: {
@@ -184,14 +221,20 @@ export default class AuthConsumer {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${this.token}`,
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(userData),
         });
-        if (response.status === 401) {
-            localStorage.removeItem(AUTH_TOKEN);
-            window.location.href = '/login';
-        }
+        
+        useAppAlertStore().setCode(response.status);
+        let data = await response.json();
+        if (response.status === 200){
+            useAppAlertStore().setCode(data.Header.code)
 
-        return response.json();
+            if(data.Header.status){
+                useAppUserStore().setUser(data.Body);
+            }
+        } 
+
+        return data;
 
     }
     async logOut() {
@@ -203,12 +246,18 @@ export default class AuthConsumer {
                 'Authorization': `Bearer ${this.token}`,
             },
         });
-        if (response.status === 401) {
-            localStorage.removeItem(AUTH_TOKEN);
-            window.location.href = '/login';
-        }
+        useAppAlertStore().setCode(response.status);
+        let data = await response.json();
+        if (response.status === 200){
+            useAppAlertStore().setCode(data.Header.code)
 
-        return response.json();
+            if(data.Header.status){
+                useAppUserStore().setUser(new User());
+                localStorage.removeItem(AUTH_TOKEN);
+            }
+        } 
+
+        return data;
 
     }
 

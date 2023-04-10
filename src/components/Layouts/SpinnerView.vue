@@ -1,29 +1,59 @@
+<script setup>
+
+const darkBack = defineProps({
+    trenspBackg: {
+        type: Boolean,
+        default: false
+    }
+});
+
+
+
+
+</script>
+
 <template>
 
-    <div class="loader">
-        <div class="face">
-            <div class="circle"></div>
-        </div>
-        <div class="face">
-            <div class="circle"></div>
+    <div class="spinner-container position-absolute top-50 start-50 translate-middle" :class="darkBack.trenspBackg ? 'back-show' : 'back-hide'">
+        <div class="loader">
+            <div class="face">
+                <div class="circle"></div>
+            </div>
+            <div class="face">
+                <div class="circle"></div>
+            </div>
         </div>
     </div>
-    </template>
+
+
+</template>
     
-    <style scoped>
-    body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: black;
+    
+<style scoped>
+
+.spinner-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+
+    .back-hide{
+        background-color: rgb(92, 221, 253);
     }
+
+    .back-show{
+        background-color: rgba(0, 0, 0, 0.445);
+    }
+
     
     .loader {
-        width: 20em;
-        height: 20em;
-        font-size: 10px;
+        width: 10em;
+        height: 10em;
+        font-size: 8px;
         position: relative;
         display: flex;
         align-items: center;
@@ -34,7 +64,7 @@
         position: absolute;
         border-radius: 50%;
         border-style: solid;
-        animation: animate 1.5s linear infinite;
+        animation: animate .6s linear infinite;
     }
     
     .loader .face:nth-child(1) {

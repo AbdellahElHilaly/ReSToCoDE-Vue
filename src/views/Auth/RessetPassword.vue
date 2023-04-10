@@ -6,8 +6,8 @@
 
     import AuthConsumer from "@/Api/Services/AuthConsumer.js";
     import RessetModel from "@/Api/models/RessetModel.js";
-    
 
+    
     import Alert from "@/components/Layouts/AlertVue.vue";
     import Spinner from "@/components/Layouts/SpinnerView.vue";
     import FormeVue from "@/components/Layouts/FormeVue.vue";
@@ -52,7 +52,7 @@
                         email_exist.value = true;
                         ressetModel.value.name = responce.Body;
                     }
-                    else    alertType.value = "warning";
+                    else   alertType.value = "warning";
                 }
                 loadAlert(responce.message);
             })

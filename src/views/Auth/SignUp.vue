@@ -1,129 +1,53 @@
-
 <script setup>
+
     import { RouterLink } from "vue-router";
     import { ref, onMounted } from "vue";
 
     import User from "@/Api/models/User.js";
+
     import AuthConsumer from "@/Api/Services/AuthConsumer.js";
 
-    import Alert from "@/components/Layouts/AlertVue.vue";
+    import Alert from "@/components/Layouts/Alert.vue";
     import Spinner from "@/components/Layouts/SpinnerView.vue";
     import FormeVue from "@/components/Layouts/FormeVue.vue";
 
 
-    const alertContainer = ref(null);
-    const spinnerContainer = ref(null);
+    import { useAppSpinnerStore } from '@/store/appSpinnerStore.js'
+    import { useAppAlertStore } from '@/store/appAlerStore.js'
 
-    const user = ref(new User());
+
     const authConsumer = new AuthConsumer();
-
-    const serverConected = ref(false)
-    authConsumer.testServer()
-            .then((responce) => {
-                hideSpinner();
-                serverConected.value = true;
-            });
-
-    const alertMessage = ref(null);
-    const alertType = ref("info");
-    const alertVisibility  = ref("hide");
-
+    const user = ref(new User());
+    
 
 
     const signUp = () => {
 
-        loadSpinner();
-
+        useAppSpinnerStore().show("register");
         authConsumer
             .signUp(user.value)
             .then((responce) => {
-                hideSpinner();
-                if(responce.errors)
-                    alertType.value = "error";
-                else{
-                    alertType.value = "warning";
-                    user.value.id = responce.Body.id;
-                }
-
-                if(localStorage.getItem("user-redy-to-activate")){
-                    localStorage.removeItem("user-redy-to-activate");
-                    localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
-                }
-                else{
-                    localStorage.setItem("user-redy-to-activate", JSON.stringify(user.value));
-                }
-
-                console.log(localStorage.getItem("user-redy-to-activate"));
-
-                loadAlert(responce.message);
-                
+                useAppSpinnerStore().hide();
+                useAppAlertStore().show("register" , responce.message);
             })
             .catch((error) => {
-                hideSpinner();
-                alertType.value = "error";
-                loadAlert(error.message);
+                console.error(error);
             });
     };
-
-
-
-    
-
-
-
-    function loadAlert(message) {
-        
-        alertMessage.value = message;
-
-        alertContainer.value.classList.remove("hide");
-        alertContainer.value.classList.remove("fadeOut");
-        alertContainer.value.classList.add("show");
-        alertVisibility.value = "show";
-
-    }
-
-    function hideSpinner() {
-        spinnerContainer.value.classList.remove("show");
-        spinnerContainer.value.classList.add("hide");
-    }
-
-    function loadSpinner() {
-        spinnerContainer.value.classList.remove("hide");
-        spinnerContainer.value.classList.add("show");
-    }
-
-    onMounted(() => {
-        alertContainer.value = document.querySelector(".alert");
-        spinnerContainer.value = document.querySelector(".spinner-container");
-        loadSpinner();
-    });
-
-
-
 
 </script>
 
 <template>
     <section>
-
-        <Alert :visibility="alertVisibility"  :type="alertType" >
-            <template #message>
-                {{alertMessage}}
-            </template>
-            <template #link v-if="alertType == 'warning'">
-                <RouterLink to="activate">
-                    <button class="btn btn-primary">Activate</button>
-                </RouterLink>
-            </template>
-            
-        </Alert>
-
-        <div class="spinner-container hide" >
-            <Spinner />
-        </div>
-
         
-        <FormeVue v-if="serverConected">
+        <FormeVue >
+            <template #alert>
+                <Alert v-if="useAppAlertStore().getStatus == 'register'" />
+            </template>
+            <template #spinner>
+                <Spinner v-if="useAppSpinnerStore().getStatus == 'register'" :trenspBackg="true" />
+            </template>
+
             <template #title>
                 <h1>Sign Up</h1>
             </template>

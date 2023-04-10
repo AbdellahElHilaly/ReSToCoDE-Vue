@@ -1,3 +1,4 @@
+import {AUTH_TOKEN} from '@/Api/Config/config.js';
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingPages from '../views/LandingPages/LandingHome.vue'
 import LogIn from '@/views/Auth/LogIn.vue'
@@ -28,14 +29,14 @@ const router = createRouter({
       component: LogIn,
 
       // if the user is already logged in, redirect to the dashboard
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('auth-token');
-        if (token) {
-          next('/dashboard');
-        } else {
-          next();
-        }
-      }
+      // beforeEnter: (to, from, next) => {
+      //   const token = localStorage.getItem(AUTH_TOKEN);
+      //   if (token) {
+      //     next('/dashboard');
+      //   } else {
+      //     next();
+      //   }
+      // }
       
 
     },
@@ -48,28 +49,28 @@ const router = createRouter({
       path: '/activate',
       name: 'ActivationForm',
       component: ActivateAccount,
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('auth-token');
-        if (token) {
-          next();
-        } else {
-          next('/login');
-        }
-      }
+      // beforeEnter: (to, from, next) => {
+      //   const token = localStorage.getItem(AUTH_TOKEN);
+      //   if (token) {
+      //     next();
+      //   } else {
+      //     next('/login');
+      //   }
+      // }
     },
     {
       path: '/profile',
       name: 'UserProfile',
       component: UserProfile,
 
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('auth-token');
-        if (token) {
-          next();
-        } else {
-          next('/login');
-        }
-      }
+      // beforeEnter: (to, from, next) => {
+      //   const token = localStorage.getItem(AUTH_TOKEN);
+      //   if (token) {
+      //     next();
+      //   } else {
+      //     next('/login');
+      //   }
+      // }
 
     },
     {
@@ -81,14 +82,14 @@ const router = createRouter({
       path: '/verify',
       name: 'DeviceVerification',
       component: DeviceVerification,
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('auth-token');
-        if (token) {
-          next();
-        } else {
-          next('/login');
-        }
-      }
+      // beforeEnter: (to, from, next) => {
+      //   const token = localStorage.getItem(AUTH_TOKEN);
+      //   if (token) {
+      //     next();
+      //   } else {
+      //     next('/login');
+      //   }
+      // }
     },
     {
       path: '/500',
@@ -107,14 +108,14 @@ const router = createRouter({
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard,
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('auth-token');
-        if (token) {
-          next();
-        } else {
-          next('/login');
-        }
-      }
+      // beforeEnter: (to, from, next) => {
+      //   const token = localStorage.getItem(AUTH_TOKEN);
+      //   if (token) {
+      //     next();
+      //   } else {
+      //     next('/login');
+      //   }
+      // }
     },
 
 

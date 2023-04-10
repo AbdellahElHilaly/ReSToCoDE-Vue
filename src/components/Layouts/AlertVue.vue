@@ -10,8 +10,6 @@ const props = defineProps({
         type: String,
         default: 'hide',
     }
-
-
 });
 
 const alertTypes = {

@@ -1,33 +1,37 @@
 <script setup>
         import { RouterLink } from "vue-router";
+
 </script>
 
 <template>
 
-<div class="form">
-    <RouterLink to="/">
-        <i class="x fas fa-times"></i>
-    </RouterLink>
-    <slot name="title" class="title"></slot>
-    <form>
-        <slot name="form" class="form"></slot>
-    </form>
-    <slot name="footer" class="footer"></slot>
-</div>
+    <div class="form position-relative">
+            <slot name="alert" class="alert"></slot>
+            <slot name="spinner" class="spinner">
+
+            </slot>
+            <RouterLink to="/">
+                <i class="x fas fa-times"></i>
+            </RouterLink>
+            <slot name="title" class="title"></slot>
+            <form>
+                <slot name="form" class="form"></slot>
+            </form>
+            <slot name="footer" class="footer"></slot>
+        
+    </div>
 </template>
 
 
 <style scoped>
 
 .form{
-    width: 100%;
-    max-width: 500px;
+    width: 480px;
     margin: 0 auto;
     padding:20px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    position: relative;
 }
 
 .x {
