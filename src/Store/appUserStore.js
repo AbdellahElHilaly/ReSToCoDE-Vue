@@ -23,19 +23,19 @@ export const useAppUserStore = defineStore('appUserStore', {
     },
     actions: {
         setUser(user) { 
-            // this.user = user;
+            this.user = user;
             // if isset user.id then set user.id else set 0
 
-            this.user.id = user.id ? user.id : 0;
-            this.user.name = user.name ? user.name : '*';
-            this.user.email = user.email ? user.email : '*';
-            this.user.current_password = user.current_password ? user.current_password : '*';
-            this.user.password = user.password ? user.password : '*';
-            this.user.password_confirmation = user.password_confirmation ? user.password_confirmation : '*';
-            this.user.right = user.right ? user.right : '*';
-            this.user.left = user.left ? user.left : '*';
-            this.user.rule_id = user.rule_id ? user.rule_id : 1;
-            this.user.role = user.role ? user.role : '*';
+            // this.user.id = user.id ? user.id : 0;
+            // this.user.name = user.name ? user.name : '*';
+            // this.user.email = user.email ? user.email : '*';
+            // this.user.current_password = user.current_password ? user.current_password : '*';
+            // this.user.password = user.password ? user.password : '*';
+            // this.user.password_confirmation = user.password_confirmation ? user.password_confirmation : '*';
+            // this.user.right = user.right ? user.right : '*';
+            // this.user.left = user.left ? user.left : '*';
+            // this.user.rule_id = user.rule_id ? user.rule_id : 1;
+            // this.user.role = user.role ? user.role : '*';
 
             // console.log(this.user);
 

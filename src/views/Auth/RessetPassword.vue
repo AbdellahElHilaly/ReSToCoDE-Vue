@@ -1,91 +1,62 @@
-
 <script setup>
-    import { ref, onMounted } from "vue";
-    import { RouterLink } from "vue-router";
 
+    import { RouterLink } from "vue-router";
+    import router from '@/router';
+    import { ref , onMounted ,reactive} from "vue";
+
+    import User from "@/Api/models/User.js";
 
     import AuthConsumer from "@/Api/Services/AuthConsumer.js";
-    import RessetModel from "@/Api/models/RessetModel.js";
 
-    
-    import Alert from "@/components/Layouts/AlertVue.vue";
+    import Alert from "@/components/Layouts/Alert.vue";
     import Spinner from "@/components/Layouts/SpinnerView.vue";
     import FormeVue from "@/components/Layouts/FormeVue.vue";
 
 
-    const alertContainer = ref(null);
-    const spinnerContainer = ref(null);
+    import { useAppSpinnerStore } from '@/store/appSpinnerStore.js'
+    import { useAppAlertStore } from '@/store/appAlerStore.js'
+    import { useAppUserStore } from '@/store/appUserStore.js'
+
 
     const authConsumer = new AuthConsumer();
-
-    const serverConected = ref(false)
-    authConsumer.testServer()
-            .then((responce) => {
-                hideSpinner();
-                serverConected.value = true;
-            });
-
-    const alertMessage = ref(null);
-    const alertType = ref("info");
-    const alertVisibility  = ref("hide");
-    const routVisibility  = ref(false);
+    const ressetUser = ref(new User());
+    const forgorUser = reactive(useAppUserStore().getUser);
 
     const email_exist = ref(false);
 
-    const ressetModel= ref(new RessetModel());
-
-
-
-
 
     const forgotPassword = () =>{
-        loadSpinner();
+
+        useAppSpinnerStore().show("ressetpassword");
 
         authConsumer
-            .forgotPassword(ressetModel.value)
+            .forgotPassword(forgorUser)
             .then((responce) => {
-                hideSpinner();
-                if(responce.errors)  alertType.value = "error";
-                else{
-                    if(responce.Header.status) {
-                        alertType.value = "success";
-                        email_exist.value = true;
-                        ressetModel.value.name = responce.Body;
-                    }
-                    else   alertType.value = "warning";
-                }
-                loadAlert(responce.message);
+                useAppSpinnerStore().hide();
+                useAppAlertStore().show("ressetpassword" , responce.message);
+                // ressetUser.value = useAppUserStore().getUser
+                
+                if(useAppUserStore().getUser.name != '')  email_exist.value = true;
+
+                
             })
             .catch((error) => {
-                hideSpinner();
-                alertType.value = "error";
-                loadAlert(error.message);
+                console.error(error);
             });
 
     }
 
     const resetPassword = () =>{
-        loadSpinner();
-
+        ressetUser.value.email = useAppUserStore().getUser.email;
+        useAppSpinnerStore().show("ressetpassword");
         authConsumer
-            .ressetPassword(ressetModel.value)
+            .ressetPassword(ressetUser.value)
             .then((responce) => {
-                hideSpinner();
-                if(responce.errors)  alertType.value = "error";
-                else{
-                    if(responce.Header.status) {
-                        alertType.value = "success";
-                        email_exist.value = true;
-                        routVisibility.value = true;
-                    }
-                    else    alertType.value = "warning";
-                }
-                loadAlert(responce.message);
+                useAppSpinnerStore().hide();
+                useAppAlertStore().show("ressetpassword" , responce.message);
             })
             .catch((error) => {
-                hideSpinner();
-                alertType.value = "error";
-                loadAlert(error.message);
+                console.error(error);
             });
         
     }
@@ -93,62 +64,18 @@
 
 
     const resend = () => {
-
-        loadSpinner();
-
+        useAppSpinnerStore().show("ressetpassword");
+        const resendUser = useAppUserStore().getUser;
         authConsumer
-            .resendActivationMail(ressetModel.value)
+            .resendActivationMail(resendUser)
             .then((responce) => {
-                hideSpinner();
-                if(responce.errors)  alertType.value = "error";
-                else{
-                    if(responce.Header.status) {
-                        alertType.value = "success";
-                    }
-                    else    alertType.value = "warning";
-                }
-                loadAlert(responce.message);
+                useAppSpinnerStore().hide();
+                useAppAlertStore().show("ressetpassword" , responce.message);
             })
             .catch((error) => {
-                hideSpinner();
-                alertType.value = "error";
-                loadAlert(error.message);
+                console.error(error);
             });
     };
-
-
-
-    
-
-
-
-    function loadAlert(message) {
-        alertMessage.value = message;
-        alertContainer.value.classList.remove("hide");
-        alertContainer.value.classList.remove("fadeOut");
-        alertContainer.value.classList.add("show");
-        alertVisibility.value = "show";
-    }
-
-
-
-
-    function hideSpinner() {
-        spinnerContainer.value.classList.remove("show");
-        spinnerContainer.value.classList.add("hide");
-    }
-
-    function loadSpinner() {
-        spinnerContainer.value.classList.remove("hide");
-        spinnerContainer.value.classList.add("show");
-    }
-
-    onMounted(() => {
-        alertContainer.value = document.querySelector(".alert");
-        spinnerContainer.value = document.querySelector(".spinner-container");
-        hideSpinner();
-    });
-
 
 
 
@@ -158,31 +85,21 @@
 <template>
     <section>
 
-        <div class="alert-container" >
-            <Alert :visibility="alertVisibility"  :type="alertType" >
-                <template #message>
-                    {{alertMessage}}
-                </template>
-                <template #link v-if="routVisibility">
-                    <RouterLink to="/login">
-                        <button class="btn btn-primary">Login</button>
-                    </RouterLink>
-                </template>
-            </Alert>
-        </div>
+        <FormeVue>
+            <template #alert>
+                <Alert v-if="useAppAlertStore().getStatus == 'ressetpassword'" />
+            </template>
+            <template #spinner>
+                <Spinner v-if="useAppSpinnerStore().getStatus == 'ressetpassword'" :trenspBackg="true" />
+            </template>
 
-        <div class="spinner-container hide" >
-            <Spinner />
-        </div>
-
-        <FormeVue  v-if="serverConected">
             <template #title>
                 <div class="activation-title">
-                <h2 class="title" v-if="ressetModel">Welcome {{ressetModel.name}}</h2>
-                <h2 class="title" v-else>Welcome</h2>
-                <p class="message" v-if="!email_exist">Please enter your email address to receive a password reset code</p>
-                <p class="message" v-else>Please enter the code we sent to your email address</p>
-                <div class="resend-container">
+                <!-- check is user e -->
+                <h2 class="title" >Welcome {{useAppUserStore().getUser.name}}</h2>
+                <!-- <h2 class="title" v-if="!email_exist">Welcome</h2> -->
+                <p class="message">Enter the activation code sent to your email</p>
+                <div class="resend-container" v-if="email_exist">
                     <p class="message">Didn't receive the code?</p>
                     <i class="icon-resend fas fa-redo" @click="resend"></i>
                 </div>
@@ -193,25 +110,25 @@
             <template #form>
                 <div v-if="!email_exist" class="form-group">
                     <label for="email">Email address</label>
-                    <input type="email" class="form-control" autocomplete="email" v-model="ressetModel.email">
+                    <input type="email" class="form-control" autocomplete="email" v-model="forgorUser.email">
                 </div>
 
                 <div v-if="email_exist" class="form-group">
                     <label for="left">left code</label>
-                    <input type="number" class="form-control" authocomplete="left" v-model="ressetModel.left">
+                    <input type="number" class="form-control" authocomplete="left" v-model="ressetUser.left">
                 </div>
                 <div v-if="email_exist" class="form-group">
                     <label for="right">right code</label>
-                    <input type="number" class="form-control"  autocomplete="right" v-model="ressetModel.right">
+                    <input type="number" class="form-control"  autocomplete="right" v-model="ressetUser.right">
                 </div>
                 <div v-if="email_exist" class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control"   autocomplete="current-password" v-model="ressetModel.password">
+                    <input type="password" class="form-control"   autocomplete="current-password" v-model="ressetUser.password">
                 </div>
 
                 <div v-if="email_exist" class="form-group">
                     <label for="confirm-password">Confirm Password</label>
-                    <input type="password" class="form-control"  autocomplete="current-password" v-model="ressetModel.password_confirmation">
+                    <input type="password" class="form-control"  autocomplete="current-password" v-model="ressetUser.password_confirmation">
                 </div>
                 
                 <button v-if="!email_exist" type="submit" class="btn btn-primary" @click.prevent="forgotPassword">Send</button>

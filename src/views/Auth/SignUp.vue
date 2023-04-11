@@ -71,7 +71,7 @@
                     <input type="password" class="form-control"  autocomplete="current-password" v-model="user.password_confirmation">
                 </div>
 
-                <button type="submit" class="btn btn-primary" @click.prevent="signUp" >Login</button>
+                <button type="submit" class="btn btn-primary" @click.prevent="signUp">Sign Up</button>
             </template>
 
             <template #footer>

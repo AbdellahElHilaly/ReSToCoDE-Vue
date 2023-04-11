@@ -76,6 +76,7 @@ export default class AuthConsumer {
             useAppAlertStore().setCode(data.Header.code)
 
             if(data.Header.code ===100 || data.Header.status){
+                
                     setTimeout(() => {
                         router.push('/login');
                     }, 800);
@@ -90,16 +91,32 @@ export default class AuthConsumer {
         
     }
 
-    async trustDevice(data) {
-        const response = await fetch(`${this.url}/trust?left=${data.left}&right=${data.right}`, {
+    async trustDevice(userData) {
+        const response = await fetch(`${this.url}/trust?left=${userData.left}&right=${userData.right}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
             },
         });
-        useAppAlertStore().setCode(response.status);
-        return response.json();
+        let data = await response.json();
+        if (response.status === 200) {
+
+            useAppAlertStore().setCode(data.Header.code)
+            console.log(data.Header.code)
+
+
+            if(data.Header.status){ 
+                setTimeout(() => {
+                    router.push('/login');
+                }, 1000);
+            } 
+            
+        } else {
+            useAppAlertStore().setCode(response.status);
+        }
+
+        return data;
     }
 
 
@@ -119,15 +136,22 @@ export default class AuthConsumer {
 
             useAppAlertStore().setCode(data.Header.code)
 
-            if(data.Header.code === 400) useAppUserStore().setUser(data.Body);
 
             if(data.Header.status){ 
                 localStorage.setItem(AUTH_TOKEN, data.Body.token);
+                useAppUserStore().setUser(data.Body);
                 setTimeout(() => {
                     router.push('/');
                 }, 1000);
             } 
-            else if(data.Header.code === 400) useAppAlertStore().setLink('/activate')
+            else if(data.Header.code === 400) {
+                useAppUserStore().setUser(data.Body);
+                useAppAlertStore().setLink('/activate')
+            }
+            else if(data.Header.code === 403){
+                    useAppAlertStore().setLink('/verify')
+                    useAppUserStore().setUser(data.Body);
+            }
 
             
         } else {
@@ -173,7 +197,7 @@ export default class AuthConsumer {
         return response.json();
     }
 
-    async forgotPassword(data) {
+    async forgotPassword(dataUser) {
         const response = await fetch(`${this.url}/forgotPassword`, {
             method: 'POST',
             headers: {
@@ -181,21 +205,26 @@ export default class AuthConsumer {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${this.token}`,
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(dataUser),
         });
-        if (response.status === 401) {
-            localStorage.removeItem(AUTH_TOKEN);
-            router.push('/login');
-        }
 
-        return response.json();
+        useAppAlertStore().setCode(response.status);
+        let data = await response.json();
+        if (response.status === 200){
+            useAppAlertStore().setCode(data.Header.code)
+
+            if(data.Header.status){
+                useAppUserStore().setUser(data.Body);
+            }
+        } 
+        return data;
 
     }
 
     
 
-    async ressetPassword(data) {
-        const response = await fetch(`${this.url}/ressetpassword?left=${data.left}&right=${data.right}&password=${data.password}&password_confirmation=${data.password_confirmation}`, {
+    async ressetPassword(userData) {
+        const response = await fetch(`${this.url}/ressetpassword?left=${userData.left}&right=${userData.right}&password=${userData.password}&password_confirmation=${userData.password_confirmation}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -203,12 +232,19 @@ export default class AuthConsumer {
                 'Authorization': `Bearer ${this.token}`,
             },
         });
-        if (response.status === 401) {
-            localStorage.removeItem(AUTH_TOKEN);
-            router.push('/login');
-        }
         useAppAlertStore().setCode(response.status);
-        return response.json();
+        let data = await response.json();
+        if (response.status === 200){
+            useAppAlertStore().setCode(data.Header.code)
+
+            if(data.Header.status){
+                useAppUserStore().setUser(data.Body);
+                setTimeout(() => {
+                    router.push('/login');
+                }, 1000);
+            }
+        } 
+        return data;
     }
 
 
@@ -259,6 +295,21 @@ export default class AuthConsumer {
 
         return data;
 
+    }
+
+    async getRole() {
+        const response = await fetch(`${this.url}/profile`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${this.token}`,
+            },
+        });
+        let data = await response.json();
+        let role = null;
+        if (response.status === 200 && data.Header.status)  role = data.Body.role;
+        return role;
     }
 
 

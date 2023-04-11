@@ -1,14 +1,37 @@
 <script setup>
+    import { onMounted, ref , reactive} from 'vue';
     import { RouterLink } from 'vue-router';
-    import {AUTH_TOKEN} from '@/Api/Config/config.js';
+    import { AUTH_TOKEN } from '@/Api/Config/config.js';
+    import AuthConsumer from '@/Api/Services/AuthConsumer.js';
+
+    const authConsumer = new AuthConsumer();
+
+    const isLoading = reactive({})
+
+
+    const startLoading = (elt) => (isLoading[elt] = true);
 
     const isLogged = () => {
-        return localStorage.getItem(AUTH_TOKEN) ? true : false;
-    }
+        return localStorage.getItem(AUTH_TOKEN) !== null;
+    };
+
+    const isAdmin = async () => {
+        const role = await authConsumer.getRole();
+        console.log(role);
+        return role === 'admin';
+    };
+
+    const isAdminUser = ref(false);
+
+    onMounted(async () => {
+        isAdminUser.value = await isAdmin();
+    });
 
 
-
+    
+    
 </script>
+
 
 <template>
 
@@ -46,25 +69,37 @@
                 </ul>
 
                 <div class="d-flex auth" v-if="!isLogged()">
-                    <router-link to="/login">
-                        <i class="fas fa-user me-2"></i>
+                    <router-link to="/login" @click="startLoading('snin')">
+                        <i v-if="!isLoading['snin']" class="fas fa-user me-2"></i>
+                        <i v-else class="fas fa-circle-notch me-2 spin"></i>
+                        
                         <span>Log in</span>
                     </router-link>
 
-                    <router-link to="/signup">
-                        <i class="fas fa-user me-2"></i>
+                    <router-link to="/signup" @click="startLoading('snup')">
+                        <i v-if="!isLoading['snup']" class="fas fa-user me-2"></i>
+                        <i v-else class="fas fa-circle-notch me-2 spin"></i>
                         <span>Sign up</span>
                     </router-link>
                     
                 </div>
 
                 <div class="d-flex auth" v-else>
-                    <router-link to="/profile">
-                        <i class="fas fa-user me-2"></i>
+                    <router-link @click="startLoading('dash')" to="/dashboard" class="rout-dashboard" v-if="isAdminUser">
+                        <i v-if="!isLoading['dash']" class="fas fa-tachometer-alt me-2"></i>
+                        <i v-else class="fas fa-circle-notch me-2 spin"></i>
+                        <span>Dashboard</span>
+                    </router-link>
+
+                    <router-link to="/profile" @click="startLoading('prof')">
+                        <i v-if="!isLoading['prof']" class="fas fa-user me-2"></i>
+                        <i v-else class="fas fa-circle-notch me-2 spin"></i>
                         <span>Profile</span>
                     </router-link>
                 </div>  
             </div>
+
+            
 
 
             
@@ -136,6 +171,22 @@
     color: orange;
 }
 
+.navbar .auth .rout-dashboard i{
+    color: #00d0ff;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
 @media (max-width: 992px) {
     .navbar {
