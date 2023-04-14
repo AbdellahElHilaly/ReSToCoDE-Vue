@@ -3,7 +3,7 @@
 <template>
 
     <div class="item">
-        <img class="item-image" src="../assets/images/menue-item.jpg" alt="">
+        <img class="item-image" src="http://127.0.0.1:8000/media/images/64357e22b2552.jpg" alt="">
         <p class="item-title">plat 1</p>
     </div>
 
@@ -35,12 +35,6 @@
     font-size: 1.2rem;
     font-weight: bold;
     color: white;
-}
-
-@media only screen and (max-width: 768px){
-    .item {
-        width: calc(33vw - 1.5rem);
-    }
 }
 
 </style>

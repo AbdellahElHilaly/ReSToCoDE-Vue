@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.3.0",
+    "animate.css": "^4.1.1",
     "chart.js": "^4.2.1",
     "instantsearch.css": "^8.0.0",
     "mdb-ui-kit": "^6.2.0",

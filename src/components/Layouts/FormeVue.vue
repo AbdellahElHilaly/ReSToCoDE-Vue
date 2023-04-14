@@ -25,6 +25,7 @@
 
 <style scoped>
 
+
 .form{
     width: 480px;
     margin: 0 auto;

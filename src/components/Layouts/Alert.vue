@@ -1,7 +1,7 @@
 <script setup>
     import { useAppAlertStore } from '@/store/appAlerStore.js'
     import { ref , onMounted } from 'vue'
-    import { RouterLink } from "vue-router";
+    import {RouterLink } from "vue-router";
     const successCodes = ref([200 , 201])
     const infoCodes = ref([100])
     const dangerCodes = ref([422 , 500])
@@ -17,6 +17,8 @@
         }
     }
 
+    
+
     onMounted(() => {
         alertElement.value = document.querySelector(".Alert");
     })
@@ -29,26 +31,26 @@
         <div class="check" v-if="successCodes.includes(useAppAlertStore().getCode)">
             <i class="far fa-check-circle color me-2"></i> 
             <span class="me-2">{{ useAppAlertStore().getMessage }}</span>
-            <RouterLink :to="useAppAlertStore().getLink" v-if="useAppAlertStore().getLink != '' " class="link">{{ useAppAlertStore().getLink }}</RouterLink>
+            <router-link :to="useAppAlertStore().getLink" v-if="useAppAlertStore().getLink != '' " class="link">{{ useAppAlertStore().getLink }}</router-link>
         </div>
 
         <div class="info" v-if="infoCodes.includes(useAppAlertStore().getCode)">
             <i class="fa fa-info-circle spin me-2"></i>
             <span class="me-2">{{ useAppAlertStore().getMessage }}</span>
-            <RouterLink :to="useAppAlertStore().getLink" v-if="useAppAlertStore().getLink != '' " class="link">{{ useAppAlertStore().getLink }}</RouterLink>
+            <router-link :to="useAppAlertStore().getLink" v-if="useAppAlertStore().getLink != '' " class="link">{{ useAppAlertStore().getLink }}</router-link>
         </div>
 
 
         <div class="warning" v-if="warningCodes.includes(useAppAlertStore().getCode)">
-            <i class="fa fa-exclamation-triangle rotate me-2"></i>
+            <i class="fa fa-exclamation-triangle dance me-2"></i>
             <span class="me-2">{{ useAppAlertStore().getMessage }}</span>
-            <RouterLink :to="useAppAlertStore().getLink" v-if="useAppAlertStore().getLink != '' " class="link">{{ useAppAlertStore().getLink }}</RouterLink>
+            <router-link :to="useAppAlertStore().getLink" v-if="useAppAlertStore().getLink != '' " class="link">{{ useAppAlertStore().getLink }}</router-link>
         </div>
 
         <div class="danger" v-if="dangerCodes.includes(useAppAlertStore().getCode)">
             <i class="far fa-times-circle shine me-2"></i>
             <span class="me-2">{{ useAppAlertStore().getMessage }}</span>
-            <RouterLink :to="useAppAlertStore().getLink" v-if="useAppAlertStore().getLink != '' " class="link">{{ useAppAlertStore().getLink }}</RouterLink>
+            <router-link :to="useAppAlertStore().getLink" v-if="useAppAlertStore().getLink != '' " class="link">{{ useAppAlertStore().getLink }}</router-link>
         </div>
     </div>
 
@@ -135,6 +137,30 @@
 
 .spin {
     animation: spin 2s linear infinite;
+    /* add animation like dancer watch classic
+     */
+}
+
+.dance {
+    animation: dance 2s linear infinite;
+}
+
+@keyframes dance {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(45deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+    75% {
+        transform: rotate(-45deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
 }
 
 .info:hover
@@ -192,9 +218,17 @@
     color: #0073ff;
     text-decoration: underline;
     font-weight: bold;
+    padding: 2px;
+    border : 1px solid black;
+    border-radius: 5px;
+}
 
 
-    
+
+.link:hover {
+    background-color: #0073ff;
+    color: #fff;
+    transition: 0.5s;
 }
 
 

@@ -17,7 +17,6 @@
 
     const isAdmin = async () => {
         const role = await authConsumer.getRole();
-        console.log(role);
         return role === 'admin';
     };
 
@@ -58,10 +57,10 @@
                         <a class="nav-link" aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#Menu">Menu</a>
+                        <a class="nav-link" href="#Meals">Meals</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#Reservation">Reservation</a>
+                        <a class="nav-link" href="#Menus">Menus</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">About</a>

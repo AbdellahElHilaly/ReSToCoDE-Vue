@@ -52,14 +52,6 @@ const router = createRouter({
       path: '/activate',
       name: 'ActivationForm',
       component: ActivateAccount,
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem(AUTH_TOKEN);
-        if (token) {
-          next();
-        } else {
-          router.push('/login');
-        }
-      }
     },
     {
       path: '/profile',
@@ -85,14 +77,6 @@ const router = createRouter({
       path: '/verify',
       name: 'DeviceVerification',
       component: DeviceVerification,
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem(AUTH_TOKEN);
-        if (token) {
-          next();
-        } else {
-          router.push('/login');
-        }
-      }
     },
     {
       path: '/500',

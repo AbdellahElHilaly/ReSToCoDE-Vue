@@ -1,15 +1,16 @@
 <script setup>
     import AppHeader from '@/components/Layouts/HeaderVue.vue'
-    import AppMenu from '@/components/MenueVue.vue'
-    import ReservationList from "@/components/ReservationList.vue";
+    import MealVue from '@/components/landingpage/MealVue.vue'
+    import Menus from "@/components/landingpage/Menus.vue";
+
 </script>
 
 
 <template>
     <div class="app">
         <AppHeader />
-        <AppMenu />
-        <ReservationList />
+        <MealVue />
+        <Menus />
     </div>
 </template>
 

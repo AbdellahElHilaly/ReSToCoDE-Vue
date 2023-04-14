@@ -20,8 +20,8 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('forgotPassword', [AuthController::class, 'forgotPassword']);
     Route::get('ressetpassword', [AuthController::class, 'ressetPassword']);
     Route::post('resendcode', [AuthController::class, 'resendActivationMail']);
-
 });
+
 
 */
 
@@ -269,10 +269,10 @@ export default class AuthConsumer {
                 useAppUserStore().setUser(data.Body);
             }
         } 
-
         return data;
-
     }
+
+
     async logOut() {
         const response = await fetch(`${this.url}/logout`, {
             method: 'POST',
