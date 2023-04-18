@@ -1,5 +1,23 @@
 <script setup>
-    import Menu from "@/components/landingpage/Menu.vue";
+import { ref, onMounted } from 'vue';
+import { appMenuStore } from '@/store/appMenuStore.js';
+import Consumer from '@/Api/Services/Consumer.js';
+import Menu from "@/components/landingpage/Menu.vue";
+
+
+const consumer = new Consumer('menus');
+
+const menus = ref([]);
+
+const getMeals = async () => {
+    await consumer.index();
+    menus.value = appMenuStore().getAll
+};
+
+onMounted(() => {
+    getMeals();
+});
+
 </script>
 
 <template>
@@ -9,7 +27,13 @@
             <div class="title-container">
                 <h2 id="Menus" class="menue-title">the menues for today</h2>
             </div>
-            <div class="body">
+            <div class="body" v-if="menus.length > 0">
+                <div class="d-flex" v-for="(menu, index) in menus" :key="index">
+                    <Menu :menu="menu" >{{ index + 1 }}</Menu>
+                    <div class="between" v-if="index < menus.length - 1"></div>
+                </div>
+            </div>
+            <div class="body" v-else>
                 <Menu />
                 <div class="between"></div>
                 <Menu />
@@ -18,6 +42,9 @@
     </section>
         
 </template>
+
+
+
 
 <style scoped>
 
@@ -68,9 +95,10 @@ section {
     height: 100%;
     background-color: orange;
     margin: 0 1rem;
+    flex-shrink: 0;
 }
 
-/* responcive in tablet and mobile */
+
 @media only screen and (max-width: 1024px) {
     .body {
         flex-direction: column;

@@ -1,20 +1,37 @@
 <script setup>
-
+    const meals = defineProps({
+        meal: {
+            type: Object,
+        },
+    })
 </script>
 
 <template>
-    <div class="card text-white">
-    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-        <img src="http://127.0.0.1:8000/media/images/64357e22b2552.jpg" class="img-fluid"/>
-        <a href="#!">
-            <div class="mask"></div>
-        </a>
+    <div class="card text-white" v-if="meal">
+        <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+            <img :src="meal.image" class="img-fluid"/>
+            <a href="#!">
+                <div class="mask"></div>
+            </a>
+        </div>
+        <div class="card-body  d-flex  justify-content-between align-items-end">
+            <p class="title">{{ meal.name }}</p>
+            <p class="category">{{ meal.category }}</p>
+        </div>
     </div>
-    <div class="card-body  d-flex  justify-content-between align-items-end">
-        <p class="title"> Card title</p>
-        <p class="category">salad</p>
+
+    <div class="card text-white" v-else>
+        <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+            <img src="https://i.gifer.com/3iNK.gif" class="img-fluid"/>
+            <a href="#!">
+                <div class="mask"></div>
+            </a>
+        </div>
+        <div class="card-body  d-flex  justify-content-between align-items-end">
+            <p class="title">Loading...</p>
+            <p class="category">Loading...</p>
+        </div>
     </div>
-</div>
     
 </template>
 

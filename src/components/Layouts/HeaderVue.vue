@@ -54,15 +54,14 @@
     color: #f5f5f5;
   }
 
-  /* hieght  */
-  /* default nave 60px + border link 2px  => nave fix position not calcule*/
+  i{
+    font-family: 'Font Awesome 5 Free'
+  }
+
   #intro-example{
     height:calc(100vh - 2px); 
   }
 
-  i{
-    font-family: 'Font Awesome 5 Free'
-  }
 
   /* responsive  */
 

@@ -38,8 +38,8 @@
         
         <div class="container-fluid">
             <div>
-            <a class="navbar-brand" href="#">ReSToCoDE</a>
-        </div>
+                <a class="navbar-brand" href="#">ReSToCoDE</a>
+            </div>
             <button
                 class="navbar-toggler"
                 type="button"
@@ -109,8 +109,6 @@
 
 
 <style scoped> 
-
-/* fix top */
 
 .navbar {
     position: fixed;

@@ -1,13 +1,14 @@
 import { RESTOCODE_URL} from '@/Api/Config/config.js';
 import { useAppSpinnerStore } from '@/store/appSpinnerStore.js'
+import router from '@/router';
 
 
-export default class Testter {
+export default class Connection {
 
-    static async connection() {
+    static async test() {
 
         try {
-            useAppSpinnerStore().show("server");
+            // useAppSpinnerStore().show("server");
             const response = await fetch(`${RESTOCODE_URL}/test`, {
                 method: 'GET',
                 headers: {
@@ -16,14 +17,13 @@ export default class Testter {
                 }
             });
 
-            useAppSpinnerStore().hide();
             const responseData = await response.json();
-            console.log(responseData);
+            // console.log(responseData);
             return responseData;
     
         } catch (error) {
+            window.location.href = '/500';
             console.error(error);
-            useRouter().push('/500');
         }
 
     }    

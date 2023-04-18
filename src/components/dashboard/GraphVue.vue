@@ -1,6 +1,6 @@
 <script setup>
-import Chart from 'chart.js/auto';
-import { onMounted } from 'vue';
+    import Chart from 'chart.js/auto';
+    import { onMounted } from 'vue';
 
 onMounted(() => {
     var ctx = document.getElementById("myChart");

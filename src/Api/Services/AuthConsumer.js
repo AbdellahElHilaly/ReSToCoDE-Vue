@@ -6,27 +6,6 @@ import router from '@/router';
 
 
 
-/*
-
-Route::group(['prefix' => 'auth'], function () {
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('edite', [AuthController::class, 'editProfile']);
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('refresh', [AuthController::class, 'refresh']);
-    Route::get('profile', [AuthController::class, 'getProfile']);
-    Route::get('delete', [AuthController::class, 'deleteProfile']);
-    Route::get('activate', [AuthController::class, 'activateAccount']);
-    Route::post('forgotPassword', [AuthController::class, 'forgotPassword']);
-    Route::get('ressetpassword', [AuthController::class, 'ressetPassword']);
-    Route::post('resendcode', [AuthController::class, 'resendActivationMail']);
-});
-
-
-*/
-
-
-
 export default class AuthConsumer {
 
 
@@ -42,7 +21,7 @@ export default class AuthConsumer {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                // 'Authorization': `Bearer ${this.token}`,
+                'Authorization': `Bearer ${this.token}`,
             },
             body: JSON.stringify(userData),
         });
@@ -68,13 +47,12 @@ export default class AuthConsumer {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                // 'Authorization': `Bearer ${this.token}`,
+                'Authorization': `Bearer ${this.token}`,
             },
         });
         let data = await response.json();
         if (response.status === 200){
             useAppAlertStore().setCode(data.Header.code)
-
             if(data.Header.code ===100 || data.Header.status){
                 
                     setTimeout(() => {
@@ -126,17 +104,14 @@ export default class AuthConsumer {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                // 'Authorization': `Bearer ${this.token}`,
+                'Authorization': `Bearer ${this.token}`,
             },
             body: JSON.stringify(data),
         });
         
         data = await response.json();
         if (response.status === 200) {
-
             useAppAlertStore().setCode(data.Header.code)
-
-
             if(data.Header.status){ 
                 localStorage.setItem(AUTH_TOKEN, data.Body.token);
                 useAppUserStore().setUser(data.Body);
@@ -298,6 +273,7 @@ export default class AuthConsumer {
     }
 
     async getRole() {
+        if(useAppUserStore().getUser.role) return useAppUserStore().user.role;
         const response = await fetch(`${this.url}/profile`, {
             method: 'GET',
             headers: {
@@ -306,6 +282,7 @@ export default class AuthConsumer {
                 'Authorization': `Bearer ${this.token}`,
             },
         });
+
         let data = await response.json();
         let role = null;
         if (response.status === 200 && data.Header.status)  role = data.Body.role;

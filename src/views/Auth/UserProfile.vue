@@ -23,10 +23,11 @@
     const userEdit = reactive(new User());
 
     const fetchProfile = async () => {
-        const response = await authConsumer.getProfile();
-        useAppUserStore().setUser(response.Body);
+        if(useAppUserStore().getUser.name == ''){
+            const response = await authConsumer.getProfile();
+            useAppUserStore().setUser(response.Body);
+        }
         userProfile.value = useAppUserStore().getUser
-
     };
 
 
