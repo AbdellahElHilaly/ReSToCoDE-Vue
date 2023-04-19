@@ -3,10 +3,8 @@
     import { appMealStore } from '@/store/appMealStore.js';
     import { appCategoryStore } from '@/store/appCategoryStore.js'
     import Consumer from '@/Api/Services/Consumer.js';
-    import Menu from "@/components/landingpage/Menu.vue";
     import Swal from 'sweetalert2'
     import Algorithme from '@/Helpers/Algorithme.js';
-    import Fuse from 'fuse.js'
     import CategoryPage from '@/components/Layouts/CategoryPage.vue';
     import Spinner from "@/components/Layouts/SpinnerView.vue";
     import { useAppSpinnerStore } from '@/store/appSpinnerStore.js'
@@ -45,15 +43,9 @@
     const pag_from = ref(0);
     const pag_to = ref(5);
 
-    const editedMeal = reactive({
-        id: 0,
-        name: "",
-        image: "",
-        description: "",
-        category_id: 0,
-        quantity: 0,
+    const tempMeal = reactive({});
         
-    });
+    
 
     const formeData = new FormData();
 
@@ -62,19 +54,22 @@
 
     const saveEditedMeal = async () => {
 
-        formeData.append("id", editedMeal.id);
-        formeData.append("name", editedMeal.name);
-        formeData.append("description", editedMeal.description);
-        formeData.append("category_id", editedMeal.category_id);
-        formeData.append("quantity", editedMeal.quantity);
+        formeData.append("id", tempMeal.id);
+        formeData.append("name", tempMeal.name);
+        formeData.append("description", tempMeal.description);
+        formeData.append("category_id", tempMeal.category_id);
+        formeData.append("quantity", tempMeal.quantity);
 
         useAppSpinnerStore().show("meal-crud");
-        const msg = await consumer.update(editedMeal.id , formeData);
+        const msg = await consumer.update(tempMeal.id , formeData);
         useAppSpinnerStore().hide();
 
         if(msg.status){
             Swal.fire("Updated!", msg.message, "success");
             meals.value[index.value] = msg.data;
+            for (const key in tempMeal) {
+                tempMeal[key] = null;
+            }
         }
         else
             Swal.fire("Error!", msg.message, "error");
@@ -86,12 +81,34 @@
 
     const setEditedMeal = (meal) => {
         index.value = meals.value.indexOf(meal);
-        editedMeal.id = meal.id;
-        editedMeal.name = meal.name;
-        editedMeal.image = meal.image;
-        editedMeal.description = meal.description;
-        editedMeal.category_id = meal.category_id;
-        editedMeal.quantity = meal.quantity;
+        tempMeal.id = meal.id;
+        tempMeal.name = meal.name;
+        tempMeal.image = meal.image;
+        tempMeal.description = meal.description;
+        tempMeal.category_id = meal.category_id;
+        tempMeal.quantity = meal.quantity;
+    };
+
+    const saveNewMeal = async () => {
+        formeData.append("name", tempMeal.name);
+        formeData.append("description", tempMeal.description);
+        formeData.append("category_id", tempMeal.category_id);
+        formeData.append("quantity", tempMeal.quantity);
+        
+
+        useAppSpinnerStore().show("meal-crud");
+        const msg = await consumer.store(formeData);
+        useAppSpinnerStore().hide();
+
+        if(msg.status){
+            Swal.fire("Created!", msg.message, "success");
+            meals.value.push(msg.data);
+            for (const key in tempMeal) {
+                tempMeal[key] = null;
+            }
+        }
+        else
+            Swal.fire("Error!", msg.message, "error");
     };
 
 
@@ -119,6 +136,30 @@
         });
     };
 
+    const confirmClear = () => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                useAppSpinnerStore().show("meal-crud");
+                const msg = await consumer.destroy("all");
+                useAppSpinnerStore().hide();
+
+                if(msg.status){
+                    Swal.fire("Deleted!", msg.message, "success");
+                    meals.value = [];
+                }
+                else
+                    Swal.fire("Error!", msg.message, "error");
+            }
+        });
+    };
+
     const prevPage = () => {
         if(pag_from.value > 0){
             pag_from.value -= 5;
@@ -139,9 +180,11 @@
         if(key != ""){
             
             for(let i = 0; i < meals.value.length; i++){
-                if(!Algorithme.search(meals.value[i].name , key)
+                if(
+                    !Algorithme.search(meals.value[i].name , key)
                     && !Algorithme.search(meals.value[i].description , key)
                     && !Algorithme.search(meals.value[i].category , key)
+                    &&!Algorithme.search(meals.value[i].quantity , key)
                 ){
                     keysInvisible.value.push(i);
                     if(pag_to.value - pag_from.value < 5){
@@ -161,7 +204,7 @@
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-            editedMeal.image = reader.result;
+            tempMeal.image = reader.result;
             formeData.append("image", file);
         };
     };
@@ -183,11 +226,11 @@
                 </div>
                 <div class="d-flex align-items-center">
                     <div class="global-actions-container">
-                        <button class="btn btn-success me-2">
+                        <button class="btn btn-success me-2" data-mdb-toggle="modal" data-mdb-target="#add-modal">
                             <i class="fas fa-plus"></i>
                         </button>
 
-                        <button class="btn btn-danger ">
+                        <button class="btn btn-danger " @click="confirmClear">
                             <i class="fas fa-trash"></i>
                         </button>
 
@@ -216,7 +259,7 @@
 
                 <tbody class="position-relative">
                     <Spinner v-if="useAppSpinnerStore().getStatus == 'meal-crud'" :trenspBackg="true" />
-                    <tr v-bind="meal" v-for="(meal, i) in meals.slice(pag_from, pag_to)" :key="meal.id" >
+                    <tr v-bind="meal" v-for="(meal, i) in meals.slice(pag_from, pag_to)" :key="meal.id" > 
                         <td v-if="!keysInvisible.includes(i)">
                             <div class="d-flex align-items-center ">
                                 <img :src="meal.image" alt="" style="width: 45px; height: 45px" class="meal-image" />
@@ -232,7 +275,7 @@
                             <CategoryPage :category="meal.category" />
                         </td>
                         <td v-if="!keysInvisible.includes(i)">
-                            <span class="badge badge-primary">{{ meal.quantity }}</span>
+                            <span class="badge">{{ meal.quantity }}</span>
                         </td>
                         <td v-if="!keysInvisible.includes(i)">
                             <div class="action-cotainer">
@@ -245,6 +288,7 @@
                     </tr>
                 </tbody>
             </table>
+
             <div class="text-end text-primary">
                 <p>Page {{ pag_from / 5 + 1 }} of {{ Math.ceil(meals.length / 5) }}</p>
             </div>
@@ -310,23 +354,23 @@
 
                         <label for="edit-meal-image">Image:</label>
                         <div class="text-center mb-3">
-                            <img :src="editedMeal.image" alt="" style="width: 100px; height: 100px" class="rounded-circle" />
+                            <img :src="tempMeal.image" alt="" style="width: 100px; height: 100px" class="rounded-circle" />
                         </div>
                         <input type="file" class="form-control" id="edit-meal-image" accept="image/*" @change="onFileChange" />
                     </div>
 
                     <div class="form-group">
                         <label for="edit-meal-name">Name:</label>
-                        <input type="text" class="form-control" id="edit-meal-name" v-model="editedMeal.name" />
+                        <input type="text" class="form-control" id="edit-meal-name" v-model="tempMeal.name" />
                     </div>
                     <div class="form-group">
                         <label for="edit-meal-description">Description:</label>
-                        <textarea class="form-control" id="edit-meal-description" rows="3" v-model="editedMeal.description"></textarea>
+                        <textarea class="form-control" id="edit-meal-description" rows="3" v-model="tempMeal.description"></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="edit-meal-category">Category:</label>
-                        <select class="form-select"  aria-label="Default select example" id="edit-meal-category" v-model="editedMeal.category_id">
+                        <select class="form-select"  aria-label="Default select example" id="edit-meal-category" v-model="tempMeal.category_id">
                             <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
                         </select>
                     </div>
@@ -335,12 +379,62 @@
 
                     <div class="form-group">
                         <label for="edit-meal-quantity">Quantity:</label>
-                        <input type="number" class="form-control" id="edit-meal-quantity" v-model="editedMeal.quantity" />
+                        <input type="number" class="form-control" id="edit-meal-quantity" v-model="tempMeal.quantity" />
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" data-mdb-dismiss="modal" aria-label="Close" @click="saveEditedMeal">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- add Meal Modal -->
+    <div class="modal fade" id="add-modal" tabindex="-1" aria-labelledby="add-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="add-modal-title">add Meal</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+
+                        <label for="add-meal-image">Image:</label>
+                        <div class="text-center mb-3">
+                            <img :src="tempMeal.image" alt="" style="width: 100px; height: 100px" class="rounded-circle" />
+                        </div>
+                        <input type="file" class="form-control" id="add-meal-image" accept="image/*" @change="onFileChange" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-meal-name">Name:</label>
+                        <input type="text" class="form-control" id="add-meal-name" v-model="tempMeal.name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="add-meal-description">Description:</label>
+                        <textarea class="form-control" id="add-meal-description" rows="3" v-model="tempMeal.description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-meal-category">Category:</label>
+                        <select class="form-select"  aria-label="Default select example" id="add-meal-category" v-model="tempMeal.category_id">
+                            <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
+                        </select>
+                    </div>
+                    
+
+
+                    <div class="form-group">
+                        <label for="add-meal-quantity">Quantity:</label>
+                        <input type="number" class="form-control" id="add-meal-quantity" v-model="tempMeal.quantity" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" data-mdb-dismiss="modal" aria-label="Close" @click="saveNewMeal">Save changes</button>
                 </div>
             </div>
         </div>
@@ -434,26 +528,7 @@
 
 }
 
-/* style pagination items now */
 
-.pagination-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-}
-
-.pagination-container i{
-    background-color: #1187d6;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 0 5px;
-}
-
-.pagination-container i:hover{
-    background-color: #035bde;
-    cursor: pointer;
-}
 
 .global-actions-container button{
     padding: 10px;
@@ -463,7 +538,14 @@
 }
 
 
-
+.badge {
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+    background-color: #6c757d;
+}
 
 
 </style>

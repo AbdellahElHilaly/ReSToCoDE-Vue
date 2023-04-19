@@ -8,6 +8,7 @@ import UserProfile from '@/views/Auth/UserProfile.vue'
 import RessetPassword from '@/views/Auth/RessetPassword.vue'
 import DeviceVerification from '@/views/Auth/DeviceVerification.vue'
 import Dashboard from '@/views/Dashboard/DashboardVue.vue'
+import DashboardAction from '@/views/Dashboard/DashboardAction.vue'
 
 import AuthConsumer from "@/Api/Services/AuthConsumer.js";
 
@@ -108,10 +109,26 @@ const router = createRouter({
           router.push('/login');
         }
       }
-      
     },
 
-
+    {
+      path: '/dashboard/:model/:name?/:action',
+      name: 'DashboardAction',
+      component: DashboardAction, 
+      beforeEnter: async (to, from, next) => {
+        const token = localStorage.getItem(AUTH_TOKEN);
+        if (token) {
+          const role = await authConsumer.getRole()
+          if (role === 'admin') {
+            next();
+          } else {
+            router.push('/');
+          }
+        } else {
+          router.push('/login');
+        }
+      }
+    },
   ]
 })
 

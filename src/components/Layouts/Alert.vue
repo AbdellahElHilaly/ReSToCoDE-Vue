@@ -17,8 +17,6 @@
         }
     }
 
-    
-
     onMounted(() => {
         alertElement.value = document.querySelector(".Alert");
     })

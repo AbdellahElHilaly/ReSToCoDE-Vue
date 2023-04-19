@@ -9,6 +9,7 @@ import NewStatistic from '@/components/dashboard/NewStatistic.vue';
 import TotalStatistic from '@/components/dashboard/TotalStatistic.vue';
 
 import MealCrud from './CRUDS/MealCrud.vue';
+import MenuCrud from './CRUDS/MenuCrud.vue';
 
 
 
@@ -25,11 +26,12 @@ import MealCrud from './CRUDS/MealCrud.vue';
 
     <main style="margin-top: 58px">
         <div class="container pt-4">
-            <GraphVue />
-            <PlatsPerformance />
+            <!-- <GraphVue />
+            <PlatsPerformance /> -->
             <MealCrud />
-            <NewStatistic />
-            <TotalStatistic />
+            <MenuCrud/>
+            <!-- <NewStatistic />
+            <TotalStatistic /> -->
         </div>
     </main>
 

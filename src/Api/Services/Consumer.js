@@ -31,21 +31,36 @@ export default class Consumer {
         return data;
     }
 
-    async store(data) {
+    async store(formeData) {
+        formeData.append("_method", "POST");
         const response = await fetch(this.url, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${this.token}`,
-                'Content-Type': 'application/json',
                 'Accept': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: formeData,
         });
     
+        const result = await response.json();
+        let msg = {
+                'message' : result.message,
+                'status' : false,
+                'data' : null,
+        }
         if (response.status === 401) {
             window.location.href = '/login';
         }
-        return response.json();
+        else if (response.status === 200) {
+            if(result.Header.status) {
+                const newData = result.Body;
+                this.storeManager.clear
+                this.storeManager.setAll(newData);
+                msg.status = true;
+                msg.data = newData;
+            }
+        }
+        return msg;
     }
 
 
@@ -61,6 +76,7 @@ export default class Consumer {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${this.token}`,
+                    'Accept': 'application/json',
                 },
                 body: formeData,
             });  
@@ -98,6 +114,7 @@ export default class Consumer {
             }
         });
         let result = await response.json();
+        console.log(result);
         let msg = {
                 'message' : result.message,
                 'status' : false,

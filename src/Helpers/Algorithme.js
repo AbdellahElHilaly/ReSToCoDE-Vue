@@ -5,6 +5,10 @@ export default class Algorithme {
         
         const vowels = ["a", "e", "i", "o", "u", "y"];
 
+        // if text or key is number  convert to string
+        text = text.toString();
+        key = key.toString();
+
         let  textWithoutVowels = text.toLowerCase().split("").filter(char => !vowels.includes(char)).join("");
         let keyWithoutVowels = key.toLowerCase().split("").filter(char => !vowels.includes(char)).join("");
         // remove spaces

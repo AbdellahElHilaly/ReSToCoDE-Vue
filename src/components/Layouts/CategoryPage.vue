@@ -13,7 +13,7 @@ const props = defineProps({
 
 <template>
     <div class="badge-container">
-    <p class="badge" :class="category">{{ category }}</p>
+        <p class="badge" :class="category">{{ category }}</p>
     </div>
 </template>
 
@@ -25,14 +25,12 @@ const props = defineProps({
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0.5rem 0;
-    
 }
 
 
 .badge {
+    margin: auto;
     display: inline-block;
-    padding: 0.30rem 0.5rem;
     border-radius: 9999px;
     font-weight: bold;
     font-size: 0.75rem;
