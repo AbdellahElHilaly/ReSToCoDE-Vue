@@ -1,37 +1,49 @@
 # ReSToCoDE
 
-/* style of project {orange black yellow } */
+## Système de réservation en ligne pour la cantine scolaire YouCode.
 
-This template should help get you started developing with Vue 3 in Vite.
+Ce cahier des charges décrit les exigences pour le développement d'un système de réservation en ligne pour la cantine scolaire. Le système permettra aux élèves et au personnel de choisir leurs repas pour la semaine le lundi matin. Il permettra également aux étudiants de suggérer des repas spéciaux s'ils ne sont pas satisfaits du menu proposé, de noter les plats et de laisser des commentaires.
 
-## Recommended IDE Setup
+## I. Interface utilisateur
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+-   Une page d'accueil qui affiche des photos de la cantine et une partie du menu pour les visiteurs.
+-   Une page de menu qui affiche le menu de la semaine pour que les élèves et le personnel puissent le consulter et réserver.
+-   Une page de demande de repas spécial pour que les élèves puissent soumettre des demandes pour des repas qui ne sont pas sur le menu.
+-   Une page d'évaluation et de commentaires des repas pour que les élèves puissent évaluer et commenter les repas une fois qu'ils ont été servis.
 
-## Customize configuration
+## II. Comptes d'utilisateurs
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+-   Deux pages d'inscription distinctes, l'une pour les utilisateurs (élèves et personnel) et l'autre pour les administrateurs.
+-   Les utilisateurs et les administrateurs devront fournir leur nom, adresse e-mail, mot de passe et une copie de leur carte scolaire pour s'inscrire.
+-   Une fois que le développeur a vérifié leur identité, un code d'activation sera envoyé à l'adresse e-mail de l'utilisateur.
+-   Les utilisateurs pourront se connecter pour consulter et réserver, demander des repas spéciaux, évaluer et commenter les repas.
+-   Les administrateurs pourront se connecter pour consulter et gérer les commandes de repas et les statistiques, télécharger des informations et des images sur les repas, et consulter les évaluations et les commentaires des élèves.
+-   Les utilisateurs pourront se connecter pour consulter et réserver, demander des repas spéciaux, évaluer et commenter les repas, et recevoir un ticket par e-mail après avoir réservé.
 
-## Project Setup
+## III. Fonctionnalités d'administration
 
-```sh
-npm install
-```
+-   Un tableau de bord pour l'administrateur pour consulter la liste des repas et apporter des modifications (ajout ou limitation des repas).
+-   Une page pour l'administrateur pour consulter et gérer les commandes de repas et les statistiques.
+-   Une page pour l'administrateur pour télécharger des informations et des images sur les repas.
+-   Une page pour l'administrateur pour consulter les évaluations et les commentaires des élèves.
+-   Une page pour l'administrateur pour gérer les comptes utilisateurs (activation ou désactivation).
 
-### Compile and Hot-Reload for Development
+## IV. Base de données
 
-```sh
-npm run dev
-```
+-   Une base de données qui stocke toutes les informations liées au système (comptes d'utilisateurs, commandes de repas, informations sur les repas, évaluations et commentaires).
+-   La base de données doit être sécurisée et accessible uniquement aux utilisateurs autorisés.
 
-### Compile and Minify for Production
+## V. Exigences techniques
 
-```sh
-npm run build
-```
+-   Le système doit être réactif et accessible sur différents appareils (ordinateur de bureau, tablette, mobile).
+-   Le système doit être compatible avec différents navigateurs web.
+-   Le système doit être développé
 
-### Lint with [ESLint](https://eslint.org/)
 
-```sh
-npm run lint
-```
+## Conceptio:
+
+[https://app.diagrams.net/?src=about#G1JtPQDScpF3n1uaMTwXScEdr6sHNucVhz](https://app.diagrams.net/?src=about#G1JtPQDScpF3n1uaMTwXScEdr6sHNucVhz)
+
+## Maket:
+
+[https://www.figma.com/file/8gAaJchS5VAkMNoWOUpSxp/ReSToCoDE?node-id=0-1&t=W97QK9VDCruaZg1Q-0](https://www.figma.com/file/8gAaJchS5VAkMNoWOUpSxp/ReSToCoDE?node-id=0-1&t=W97QK9VDCruaZg1Q-0)
