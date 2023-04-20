@@ -16,6 +16,7 @@
     const getMenus = async () => {
         await consumer.index();
         menus.value = appMenuStore().getAll
+        console.log(menus.value);
     };
 
 
@@ -35,69 +36,6 @@
         
     
 
-    const formeData = new FormData();
-
-
-
-
-    const saveEditedMeal = async () => {
-
-        formeData.append("id", tempMeal.id);
-        formeData.append("name", tempMeal.name);
-        formeData.append("description", tempMeal.description);
-        formeData.append("category_id", tempMeal.category_id);
-        formeData.append("quantity", tempMeal.quantity);
-
-        useAppSpinnerStore().show("meal-crud");
-        const msg = await consumer.update(tempMeal.id , formeData);
-        useAppSpinnerStore().hide();
-
-        if(msg.status){
-            Swal.fire("Updated!", msg.message, "success");
-            menus.value[index.value] = msg.data;
-            for (const key in tempMeal) {
-                tempMeal[key] = null;
-            }
-        }
-        else
-            Swal.fire("Error!", msg.message, "error");
-    };
-
-
-
-
-
-    const setEditedMeal = (meal) => {
-        index.value = menus.value.indexOf(meal);
-        tempMeal.id = meal.id;
-        tempMeal.name = meal.name;
-        tempMeal.image = meal.image;
-        tempMeal.description = meal.description;
-        tempMeal.category_id = meal.category_id;
-        tempMeal.quantity = meal.quantity;
-    };
-
-    const saveNewMeal = async () => {
-        formeData.append("name", tempMeal.name);
-        formeData.append("description", tempMeal.description);
-        formeData.append("category_id", tempMeal.category_id);
-        formeData.append("quantity", tempMeal.quantity);
-        
-
-        useAppSpinnerStore().show("meal-crud");
-        const msg = await consumer.store(formeData);
-        useAppSpinnerStore().hide();
-
-        if(msg.status){
-            Swal.fire("Created!", msg.message, "success");
-            menus.value.push(msg.data);
-            for (const key in tempMeal) {
-                tempMeal[key] = null;
-            }
-        }
-        else
-            Swal.fire("Error!", msg.message, "error");
-    };
 
 
     const  confirmDelete = (id) => {
@@ -170,7 +108,7 @@
             for(let i = 0; i < menus.value.length; i++){
                 if(!Algorithme.search(menus.value[i].name , key)
                     && !Algorithme.search(menus.value[i].description , key)
-                    && !Algorithme.search(menus.value[i].category , key)
+                    && !Algorithme.search(menus.value[i].quantity , key)
                 ){
                     keysInvisible.value.push(i);
                     if(pag_to.value - pag_from.value < 5){
@@ -185,22 +123,18 @@
     }
 </script>
 
-
-
-
-
 <template>
-
-    <section >
+    <section>
         <div class="table-responsive" v-if="menus">
             <div class="tabel-config">
-                <div class="search-container">
-                    <input type="text" placeholder="Search" class="form-control"  @keyup="search($event.target.value)">
+                <div class="search-container d-flex align-items-center">
+                    <p class="tabel-title fs-3  mb-0 ">Menus</p>
+                    <input type="text" placeholder="Search" class="form-control ms-4"  @keyup="search($event.target.value)">
                 </div>
                 <div class="d-flex align-items-center">
                     <div class="global-actions-container">
 
-                    <router-link :to="{ name: 'DashboardAction', params: { model: 'menu',action: 'add' }}">                   
+                    <router-link :to="{ name: 'DashboardAction', params: { model: 'menu',action: 'add' } }">                 
                         <button class="btn btn-success me-2">
                             <i class="fas fa-plus"></i>
                         </button>
@@ -318,7 +252,6 @@
     margin: 10px 0;
 }
 
-
 .meal-image {
     width: 100px;
     height: 100px;
@@ -328,15 +261,12 @@
 
 }
 
-
-
 .global-actions-container button{
     padding: 10px;
     border-radius: 50%;
     width: 2.5rem;
     height: 2.5rem;
 }
-
 
 .badge {
     padding: 5px;
@@ -347,5 +277,22 @@
     background-color: #6c757d;
 }
 
+@media (max-width: 768px) {
+.tabel-config {
+    flex-direction: column;
+    align-items: center;
+}
+
+.search-container {
+    margin-bottom: 10px;
+}
+}
+
+/* Larger screens */
+@media (min-width: 769px) {
+.tabel-config {
+    justify-content: space-between;
+}
+}
 
 </style>

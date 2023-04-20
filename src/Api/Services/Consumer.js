@@ -54,8 +54,7 @@ export default class Consumer {
         else if (response.status === 200) {
             if(result.Header.status) {
                 const newData = result.Body;
-                this.storeManager.clear
-                this.storeManager.setAll(newData);
+                this.storeManager.set(result.Body);
                 msg.status = true;
                 msg.data = newData;
             }
@@ -92,9 +91,7 @@ export default class Consumer {
             }
             else if (response.status === 200) {
                 if(result.Header.status) {
-                    const newData = result.Body;
-                    this.storeManager.clear
-                    this.storeManager.setAll(newData);
+                    this.storeManager.set(result.Body);
                     msg.status = true;
                     msg.data = newData;
                 }
@@ -114,12 +111,10 @@ export default class Consumer {
             }
         });
         let result = await response.json();
-        console.log(result);
         let msg = {
                 'message' : result.message,
                 'status' : false,
         }
-
         if (response.status === 401) {
             window.location.href = '/login';
         }
@@ -132,7 +127,6 @@ export default class Consumer {
             }
         }
         return msg;
-        
     }
 
 

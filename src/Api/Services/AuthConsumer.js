@@ -286,6 +286,7 @@ export default class AuthConsumer {
         let data = await response.json();
         let role = null;
         if (response.status === 200 && data.Header.status)  role = data.Body.role;
+        else localStorage.removeItem(AUTH_TOKEN);
         return role;
     }
 

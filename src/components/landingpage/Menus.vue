@@ -1,4 +1,5 @@
 <script setup>
+
 import { ref, onMounted } from 'vue';
 import { appMenuStore } from '@/store/appMenuStore.js';
 import Consumer from '@/Api/Services/Consumer.js';
@@ -28,14 +29,13 @@ onMounted(() => {
                 <h2 id="Menus" class="menue-title">the menues for today</h2>
             </div>
             <div class="body" v-if="menus.length > 0">
-                <div class="d-flex" v-for="(menu, index) in menus" :key="index">
-                    <Menu :menu="menu" >{{ index + 1 }}</Menu>
-                    <div class="between" v-if="index < menus.length - 1"></div>
+                <div class="w-100" v-for="(menu, index) in menus" :key="index">
+                    <Menu class="menu" :menu="menu" >{{ index + 1 }}</Menu>
                 </div>
             </div>
+
             <div class="body" v-else>
                 <Menu />
-                <div class="between"></div>
                 <Menu />
             </div>
         </div>
@@ -53,14 +53,6 @@ onMounted(() => {
 section {
     background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80');
 }
-
-
-.Menus {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    padding-bottom: 5rem;
-}
-
 
 
 
@@ -83,35 +75,32 @@ section {
 
 
 .body {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     width: 100%;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    justify-items: center;
+    align-items: center;
+    
 }
 
-.between {
-    width: 1px;
-    height: 100%;
-    background-color: orange;
-    margin: 0 1rem;
-    flex-shrink: 0;
+.menu {
+    width: 95%;
+    margin: 10px auto;
 }
+
+
 
 
 @media only screen and (max-width: 1024px) {
     .body {
-        flex-direction: column;
+        grid-template-columns: repeat(1, 1fr);
     }
 
-    .between {
-        display: none;
+    .menu {
+        width: 99%;
     }
 
-    .Menus {
-        padding-left: 0;
-        padding-right: 0;
-    }
 }
 
 

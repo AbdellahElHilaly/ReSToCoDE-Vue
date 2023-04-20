@@ -8,8 +8,8 @@ import PlatsPerformance from '@/components/dashboard/PlatsPerformance.vue';
 import NewStatistic from '@/components/dashboard/NewStatistic.vue';
 import TotalStatistic from '@/components/dashboard/TotalStatistic.vue';
 
-import MealCrud from './CRUDS/MealCrud.vue';
-import MenuCrud from './CRUDS/MenuCrud.vue';
+import MealCrud from './Tabels/Meals.vue';
+import MenuCrud from './Tabels/Menus.vue';
 
 
 

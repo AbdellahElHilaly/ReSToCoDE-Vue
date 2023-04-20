@@ -6,10 +6,14 @@ export default class Helper {
         for (const key in object) {
             formeData.append(key, object[key]);
         }
-
         return formeData;
     }
 
+    static copyObject(older, newer) {
+        for (const key in older) {
+            newer[key] = older[key];
+        }
+    }
 }
 
 

@@ -1,24 +1,15 @@
 <script setup>
-
-import MenueForme from '@/components/Formes/Menu.vue';
-
-
+    import MenueForme from '@/components/Formes/Menu.vue';
 </script>
 
 
 
 <template>
-
-    <MenueForme/>
-
-    
+    <MenueForme />
 </template>
 
 
-
 <style scoped>
-
-
 
 
 

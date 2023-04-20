@@ -221,8 +221,10 @@
     <section >
         <div class="table-responsive" v-if="meals">
             <div class="tabel-config">
-                <div class="search-container">
-                    <input type="text" placeholder="Search" class="form-control"  @keyup="search($event.target.value)">
+                
+                <div class="search-container d-flex align-items-center">
+                    <p class="tabel-title fs-3  mb-0 ">Meals</p>
+                    <input type="text" placeholder="Search" class="form-control ms-4"  @keyup="search($event.target.value)">
                 </div>
                 <div class="d-flex align-items-center">
                     <div class="global-actions-container">
@@ -525,10 +527,7 @@
     object-fit: cover;
     border-radius: 5px;
     border: 2px solid #989898;
-
 }
-
-
 
 .global-actions-container button{
     padding: 10px;
@@ -546,6 +545,22 @@
     color: #fff;
     background-color: #6c757d;
 }
+@media (max-width: 768px) {
+.tabel-config {
+    flex-direction: column;
+    align-items: center;
+}
 
+.search-container {
+    margin-bottom: 10px;
+}
+}
+
+/* Larger screens */
+@media (min-width: 769px) {
+.tabel-config {
+    justify-content: space-between;
+}
+}
 
 </style>

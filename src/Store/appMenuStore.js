@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 
+
 export const appMenuStore = defineStore('menus', {
+
     state: () => ({
         empty: true,
         menus: [],
