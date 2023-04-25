@@ -2,6 +2,7 @@ import { RESTOCODE_URL , AUTH_TOKEN } from '@/Api/Config/config.js';
 import  StoreManager from '@/Helpers/StoreManager.js';
 import router from '@/router';
 
+
 export default class Consumer {
     constructor(endPoint) {
         this.endPoint = endPoint;
@@ -43,6 +44,7 @@ export default class Consumer {
         });
     
         const result = await response.json();
+        console.log(result);
         let msg = {
                 'message' : result.message,
                 'status' : false,
@@ -54,7 +56,7 @@ export default class Consumer {
         else if (response.status === 200) {
             if(result.Header.status) {
                 const newData = result.Body;
-                this.storeManager.set(result.Body);
+                this.storeManager.set(newData);
                 msg.status = true;
                 msg.data = newData;
             }
@@ -64,6 +66,27 @@ export default class Consumer {
 
 
     async show(id) {
+        const response = await fetch(this.url+'/'+id, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${this.token}`,
+            }
+        });
+        if (response.status === 401) {
+            localStorage.removeItem(AUTH_TOKEN);
+            router.push('/login');
+        }
+        let data = await response.json();
+        data = data.Body
+        if(id === 'today'){
+            this.storeManager.setAll(data); 
+            return data;
+        }
+
+        this.storeManager.set(data[0])
+        return data;
 
     }
 
@@ -93,7 +116,7 @@ export default class Consumer {
                 if(result.Header.status) {
                     this.storeManager.set(result.Body);
                     msg.status = true;
-                    msg.data = newData;
+                    msg.data = result.Body;
                 }
             }
             return msg;
@@ -110,11 +133,13 @@ export default class Consumer {
                 'Authorization': `Bearer ${this.token}`,
             }
         });
+
         let result = await response.json();
         let msg = {
                 'message' : result.message,
                 'status' : false,
         }
+
         if (response.status === 401) {
             window.location.href = '/login';
         }

@@ -2,7 +2,9 @@
 
 import SidebarMenu from '@/components/dashboard/SidebarMenu.vue';
 import NavBar from '@/components/dashboard/NavBar.vue';
-import MenuAction from '@/views/Actions/Menu.vue';
+import MenuAdd from '@/views/Actions/add/MenuMeal.vue';
+import MenuShow from '@/views/Actions/show/MenuMeal.vue';
+import MenuEdite from '@/views/Actions/edite/MenuMeal.vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -13,17 +15,22 @@ const route = useRoute();
 
 
 <template>
-
-    <header>
+    <section>
+        <header>
         <SidebarMenu />
-        <NavBar />
-    </header>
+            <NavBar />
+        </header>
 
-    <main style="margin-top: 58px">
-        <div class="container pt-4">
-            <MenuAction v-if="route.params.model == 'menu'" />
-        </div>
-    </main>
+        <main style="margin-top: 58px">
+            <div class="container pt-4">
+                <MenuAdd v-if="route.params.model == 'menu' && route.params.action== 'add'" />
+                <MenuShow v-if="route.params.model == 'menu' && route.params.action== 'show'" />
+                <MenuEdite v-if="route.params.model == 'menu' && route.params.action== 'edite'" />
+                
+            </div>
+        </main>
+    </section>
+    
 
 </template>
 

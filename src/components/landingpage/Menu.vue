@@ -1,7 +1,10 @@
 <script setup>
+
     import { onMounted , ref } from "vue";
-    import MenuCard from "@/components/landingpage/MenuMealCard.vue";
+    import MenuMealCard from "@/components/landingpage/MenuMealCard.vue";
     import Rating from "@/components/landingpage/RatingVue.vue";
+    import BtnReservate from '@/components/Layouts/Buttons/Reserve.vue'
+    import BtnComment from '@/components/Layouts/Buttons/Comment.vue'
 
     
     const menus = defineProps({
@@ -23,14 +26,14 @@
         <div class="menu-header container-fluid  py-5 ">
             <div class="row">
                 <div class="col-lg-6">
-                    <div class="d-flex flex-column justify-content-center h-100">
+                    <div class="d-flex flex-column justify-content-center h-100 text-black">
                         <div class="text-center mb-4">
                             <h1 class="fw-bold mb-3">{{menu.name}}</h1>
                             <p class="lead"></p>{{ menu.description }}
                         </div>
-                        <div class="d-flex justify-content-center mb-3">
-                            <button class="btn btn-primary me-3">Réserver maintenant</button>
-                            <button class="btn btn-outline-primary">Ajouter un commentaire</button>
+                        <div class="d-flex justify-content-around align-items-center mb-4 buttons-container">
+                            <BtnReservate :menu_id="menu.id"/>
+                            <BtnComment :menu_id="menu.id"/>
                         </div>
                         <div class="d-flex justify-content-center align-items-center">
                             <p class="me-2 mb-0">quantity:</p>
@@ -46,7 +49,7 @@
         <div class="menu-body container-fluid">
             <Rating/>
             <div class="menu-body row justify-content-center mt-4">
-                <MenuCard v-for="item in menu.meals" :key="item.id" :meal="item" class="col-lg-2 col-md-4 mb-2"/>
+                <MenuMealCard v-for="item in menu.meals" :key="item.id" :meal="item" class="col-lg-2 col-md-4 mb-2"/>
             </div>
         </div>
 
@@ -83,7 +86,7 @@
         <div class="menu-body container-fluid">
             <Rating/>
             <div class="menu-body row justify-content-center mt-4">
-                <MenuCard v-for="item in 6" :key="item" class="col-lg-2 col-md-4 mb-2"/>
+                <MenuMealCard v-for="item in 6" :key="item" class="col-lg-2 col-md-4 mb-2"/>
             </div>
         </div>
 
@@ -148,6 +151,13 @@ section {
     height: 250px;
     object-fit: cover;
     border-radius: 0 0 0 50px;
+}
+
+.buttons-container button{
+    color: black;
+}
+.buttons-container button:active{
+    color: black;
 }
 
 

@@ -100,7 +100,7 @@ const router = createRouter({
         const token = localStorage.getItem(AUTH_TOKEN);
         if (token) {
           const role = await authConsumer.getRole()
-          if (role === 'admin') {
+          if (role === 'admin' || role === 'shef') {
             next();
           } else {
             router.push('/');
@@ -112,7 +112,7 @@ const router = createRouter({
     },
 
     {
-      path: '/dashboard/:model/:name?/:action',
+      path: '/dashboard/:model/:id?/:action',
       name: 'DashboardAction',
       component: DashboardAction, 
       beforeEnter: async (to, from, next) => {

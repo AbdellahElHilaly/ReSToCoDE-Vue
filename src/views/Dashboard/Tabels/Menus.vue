@@ -12,11 +12,12 @@
     const consumer = new Consumer('menus');
 
     const menus = ref([]);
+    const Loading = ref(true);
 
     const getMenus = async () => {
         await consumer.index();
         menus.value = appMenuStore().getAll
-        console.log(menus.value);
+        Loading.value = false;
     };
 
 
@@ -125,7 +126,7 @@
 
 <template>
     <section>
-        <div class="table-responsive" v-if="menus">
+        <div class="table-responsive">
             <div class="tabel-config">
                 <div class="search-container d-flex align-items-center">
                     <p class="tabel-title fs-3  mb-0 ">Menus</p>
@@ -139,9 +140,6 @@
                             <i class="fas fa-plus"></i>
                         </button>
                     </router-link>
-
-
-
                         <button class="btn btn-danger " @click="confirmClear">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -168,7 +166,7 @@
                 </thead>
 
 
-                <tbody class="position-relative">
+                <tbody class="position-relative" v-if="menus.length > 0">
                     <Spinner v-if="useAppSpinnerStore().getStatus == 'meal-crud'" :trenspBackg="true" />
                     <tr v-bind="meal" v-for="(meal, i) in menus.slice(pag_from, pag_to)" :key="meal.id" > 
                         <td v-if="!keysInvisible.includes(i)">
@@ -187,14 +185,34 @@
                         </td>
                         <td v-if="!keysInvisible.includes(i)">
                             <div class="action-cotainer">
-                                <input type="hidden" :value="meal.id" />
-                                <i class="show fas fa-eye"  @click="index = i"></i>
-                                <i class="edit fas fa-edit" @click="setEditedMeal(meal)"></i>
+                                
+                                <router-link :to="{ name: 'DashboardAction', params: { model: 'menu', action: 'show' , id: meal.id } }">      
+                                    <i class="show fas fa-eye"></i>
+                                </router-link>
+                                <router-link :to="{ name: 'DashboardAction', params: { model: 'menu', action: 'edite' , id: meal.id } }">      
+                                    <i class="edit fas fa-edit"></i>
+                                </router-link>
+
                                 <i class="delete fas fa-trash" @click="confirmDelete(meal.id)"></i>
                             </div>
                         </td>
                     </tr>
                 </tbody>
+                <tbody v-else>
+                    
+                    <tr v-if="Loading">
+                        <td v-for="i in 5" class="text-center">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </td>
+                    </tr>
+
+                    <tr v-else>
+                        <td v-for="i in 5">
+                            <p>no dta </p>
+                        </td>
+                    </tr>
+                </tbody>
+
             </table>
 
             <div class="text-end text-primary">

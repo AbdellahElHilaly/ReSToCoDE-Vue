@@ -11,6 +11,7 @@ const consumer = new Consumer('menus');
 const menus = ref([]);
 
 const getMeals = async () => {
+    // await consumer.show('today');
     await consumer.index();
     menus.value = appMenuStore().getAll
 };
@@ -28,7 +29,7 @@ onMounted(() => {
             <div class="title-container">
                 <h2 id="Menus" class="menue-title">the menues for today</h2>
             </div>
-            <div class="body" v-if="menus.length > 0">
+            <div class="body" v-if="menus">
                 <div class="w-100" v-for="(menu, index) in menus" :key="index">
                     <Menu class="menu" :menu="menu" >{{ index + 1 }}</Menu>
                 </div>

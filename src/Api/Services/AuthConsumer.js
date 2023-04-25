@@ -30,16 +30,13 @@ export default class AuthConsumer {
         if (response.status === 200) {
             useAppAlertStore().setCode(data.Header.code)
             useAppUserStore().setUser(data.Body);
-            useAppAlertStore().setLink('/activate')
+            if(data.Header.status) useAppAlertStore().setLink('/activate')
         } else {
             useAppAlertStore().setCode(response.status);
         }
 
-
         return data;
     }
-
-
 
     async activateAccount(userData) {
         const response = await fetch(`${this.url}/activate?left=${userData.left}&right=${userData.right}`, {
@@ -96,7 +93,6 @@ export default class AuthConsumer {
 
         return data;
     }
-
 
     async login(data) {
         const response = await fetch(`${this.url}/login`, {
@@ -196,8 +192,6 @@ export default class AuthConsumer {
 
     }
 
-    
-
     async ressetPassword(userData) {
         const response = await fetch(`${this.url}/ressetpassword?left=${userData.left}&right=${userData.right}&password=${userData.password}&password_confirmation=${userData.password_confirmation}`, {
             method: 'GET',
@@ -221,8 +215,6 @@ export default class AuthConsumer {
         } 
         return data;
     }
-
-
 
     async editProfile(userData) {
         const response = await fetch(`${this.url}/edite`, {

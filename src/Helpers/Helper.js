@@ -14,6 +14,16 @@ export default class Helper {
             newer[key] = older[key];
         }
     }
+    static filterObject(object, keys) {
+        const filtered = {};
+        Object.keys(object).forEach(key => {
+            if (keys.includes(key)) {
+                filtered[key] = object[key];
+            }
+        });
+        return filtered;
+    }
+        
 }
 
 

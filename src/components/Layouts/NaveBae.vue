@@ -18,7 +18,8 @@
 
     const isAdmin = async () => {
         const role = await authConsumer.getRole();
-        return role === 'admin';
+        if(role === 'admin' || role === 'shef') return true;
+        return false;
     };
 
     const isAdminUser = ref(false);
@@ -26,9 +27,6 @@
     onMounted(async () => {
         isAdminUser.value = await isAdmin();
     });
-
-
-    
     
 </script>
 
@@ -72,7 +70,6 @@
                     <router-link to="/login" @click="startLoading('snin')">
                         <i v-if="!isLoading['snin']" class="fas fa-user me-2"></i>
                         <i v-else class="fas fa-circle-notch me-2 spin"></i>
-                        
                         <span>Log in</span>
                     </router-link>
 

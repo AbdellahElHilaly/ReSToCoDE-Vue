@@ -4,7 +4,7 @@
     import {RouterLink } from "vue-router";
     const successCodes = ref([200 , 201])
     const infoCodes = ref([100])
-    const dangerCodes = ref([422 , 500])
+    const dangerCodes = ref([422 ,404, 500])
     const warningCodes = ref([400 , 401 , 402, 403])
 
     let  alertElement = ref(null)

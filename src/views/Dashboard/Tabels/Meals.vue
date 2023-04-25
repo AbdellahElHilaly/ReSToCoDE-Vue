@@ -5,7 +5,7 @@
     import Consumer from '@/Api/Services/Consumer.js';
     import Swal from 'sweetalert2'
     import Algorithme from '@/Helpers/Algorithme.js';
-    import CategoryPage from '@/components/Layouts/CategoryPage.vue';
+    import Category from '@/components/Show/Category.vue';
     import Spinner from "@/components/Layouts/SpinnerView.vue";
     import { useAppSpinnerStore } from '@/store/appSpinnerStore.js'
 
@@ -18,9 +18,12 @@
     const meals = ref([]);
     const categories = ref([]);
 
+    const Loading = ref(true);
+
     const getMeals = async () => {
         await consumer.index();
         meals.value = appMealStore().getAll
+        Loading.value = false;
     };
 
     const getCategories = async () => {
@@ -74,10 +77,6 @@
         else
             Swal.fire("Error!", msg.message, "error");
     };
-
-
-
-
 
     const setEditedMeal = (meal) => {
         index.value = meals.value.indexOf(meal);
@@ -259,7 +258,7 @@
                 </thead>
 
 
-                <tbody class="position-relative">
+                <tbody class="position-relative" v-if="meals.length > 0">
                     <Spinner v-if="useAppSpinnerStore().getStatus == 'meal-crud'" :trenspBackg="true" />
                     <tr v-bind="meal" v-for="(meal, i) in meals.slice(pag_from, pag_to)" :key="meal.id" > 
                         <td v-if="!keysInvisible.includes(i)">
@@ -274,7 +273,7 @@
                             <p class="mb-0">{{ meal.description }}</p>
                         </td>
                         <td v-if="!keysInvisible.includes(i)">
-                            <CategoryPage :category="meal.category" />
+                            <Category :category="meal.category" />
                         </td>
                         <td v-if="!keysInvisible.includes(i)">
                             <span class="badge">{{ meal.quantity }}</span>
@@ -289,6 +288,27 @@
                         </td>
                     </tr>
                 </tbody>
+
+                <tbody class="position-relative" v-else>
+                    <Spinner v-if="useAppSpinnerStore().getStatus == 'meal-crud'" :trenspBackg="true" />
+                    <tr v-if="Loading">
+                        <td v-for="i in 5" class="text-center">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </td>
+                    </tr>
+
+                    <tr v-else>
+                        <td v-for="i in 5">
+                            <p>no dta </p>
+                        </td>
+                    </tr>
+                </tbody>
+
+                
+
+                
+
+
             </table>
 
             <div class="text-end text-primary">
@@ -321,7 +341,7 @@
                         <h3 class="meal-name">{{ meals[index].name }}</h3>
                         <p class="meal-description">{{ meals[index].description }}</p>
                         <div class="d-flex align-items-center justify-content-between">
-                            <CategoryPage :category="meals[index].category" />
+                            <Category :category="meals[index].category" />
                             <p class="meal-quantity ">{{ meals[index].quantity }}</p>
                         </div>
 

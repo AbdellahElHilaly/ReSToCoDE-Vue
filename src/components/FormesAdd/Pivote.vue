@@ -1,6 +1,6 @@
 <script setup>
 
-    import { ref, onMounted ,reactive } from 'vue';
+    import { onMounted ,reactive, ref} from 'vue';
     import { appMenuStore } from '@/store/appMenuStore.js';
     import { appMealStore } from '@/store/appMealStore.js';
     import Consumer from '@/Api/Services/Consumer.js';
@@ -10,23 +10,22 @@
     import { useAppSpinnerStore } from '@/store/appSpinnerStore.js'
 
 
-    const consumer = new Consumer('mealsmenus');
-    const consumer_meal = new Consumer('meals');
-
+    const pivote_consumer = new Consumer('mealsmenus');
+    const meal_consumer = new Consumer('meals')
     const meals = ref([]);
-    const mealForm = reactive({
+
+    const tempPivote = reactive({
         meal_id: '',
+        menu_id: '',
         quantity: '',
         menu: '',
-        menu_id: '',
     });
 
-    const addMeal = async () => {
-
-        mealForm.menu_id = appMenuStore().get.id;
+    const addPivote = async () => {
+        tempPivote.menu_id = appMenuStore().get.id;
         useAppSpinnerStore().show('addMealMeanu');
 
-        const result = await consumer.store(Helper.saveFormData(mealForm));
+        const result = await pivote_consumer.store(Helper.saveFormData(tempPivote));
         useAppSpinnerStore().hide();
         if (result.status) {
             Swal.fire({
@@ -44,7 +43,7 @@
     };
 
     onMounted(async () => {
-        const result = await consumer_meal.index();
+        const result = await meal_consumer.index();
         meals.value = appMealStore().getAll;
     });
 
@@ -55,11 +54,10 @@
 <template>
 
     <section v-if="appMenuStore().get">
-
         <div class="forme-container">
             <div class="forme-header">
                 <p class="title">Add meal to Menu</p>
-                <button class="btn btn-info" @click="addMeal">Add</button>
+                <button class="btn btn-info" @click="addPivote">Add</button>
             </div>
             <div class="forme-body position-relative">
                 <Spinner v-if="useAppSpinnerStore().getStatus == 'addMealMeanu'" :trenspBackg="true" />
@@ -67,14 +65,14 @@
 
                     <div class="input-container">
                         <label for="">Select Meal</label>
-                        <select class="form-control" v-model="mealForm.meal_id">
+                        <select class="form-control" v-model="tempPivote.meal_id">
                             <option v-for="meal in meals" :value="meal.id">{{meal.name}}</option>
                         </select>
                         
                     </div>
                     <div class="input-container">
                         <label for="">Quantity</label>
-                        <input type="number" class="form-control" max="120" v-model="mealForm.quantity">
+                        <input type="number" class="form-control" max="120" v-model="tempPivote.quantity">
                     </div>
                 </div>
                 <div class="d-flex justify-content-between">
@@ -85,10 +83,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
     </section>
 
 </template>

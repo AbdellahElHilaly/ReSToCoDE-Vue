@@ -8,8 +8,8 @@ import PlatsPerformance from '@/components/dashboard/PlatsPerformance.vue';
 import NewStatistic from '@/components/dashboard/NewStatistic.vue';
 import TotalStatistic from '@/components/dashboard/TotalStatistic.vue';
 
-import MealCrud from './Tabels/Meals.vue';
-import MenuCrud from './Tabels/Menus.vue';
+import MealTabel from './Tabels/Meals.vue';
+import MenuTabel from './Tabels/Menus.vue';
 
 
 
@@ -27,15 +27,19 @@ import MenuCrud from './Tabels/Menus.vue';
     <main style="margin-top: 58px">
         <div class="container pt-4">
             <!-- <GraphVue />
-            <PlatsPerformance /> -->
-            <MealCrud />
-            <MenuCrud/>
-            <!-- <NewStatistic />
+            <PlatsPerformance />
+            <MealTabel />
+            <MenuTabel/>
+            <NewStatistic />
             <TotalStatistic /> -->
+
+            <MealTabel />
+            <MenuTabel />
         </div>
     </main>
 
 </template>
+
 
 
 
