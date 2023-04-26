@@ -9,6 +9,7 @@ import RessetPassword from '@/views/Auth/RessetPassword.vue'
 import DeviceVerification from '@/views/Auth/DeviceVerification.vue'
 import Dashboard from '@/views/Dashboard/DashboardVue.vue'
 import DashboardAction from '@/views/Dashboard/DashboardAction.vue'
+import Comments from '@/views/Comments/Comment.vue'
 
 import AuthConsumer from "@/Api/Services/AuthConsumer.js";
 
@@ -129,6 +130,17 @@ const router = createRouter({
         }
       }
     },
+
+    {
+      path: '/menus/comments/:id',
+      name: 'comments',
+      component: Comments,
+    },
+
+
+
+
+
   ]
 })
 

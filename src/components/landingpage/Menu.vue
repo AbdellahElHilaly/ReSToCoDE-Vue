@@ -33,7 +33,7 @@
                         </div>
                         <div class="d-flex justify-content-around align-items-center mb-4 buttons-container">
                             <BtnReservate :menu_id="menu.id"/>
-                            <BtnComment :menu_id="menu.id"/>
+                            <BtnComment :menu = "menu"/>
                         </div>
                         <div class="d-flex justify-content-center align-items-center">
                             <p class="me-2 mb-0">quantity:</p>

@@ -1,6 +1,8 @@
 import { RESTOCODE_URL , AUTH_TOKEN } from '@/Api/Config/config.js';
 import  StoreManager from '@/Helpers/StoreManager.js';
 import router from '@/router';
+import { useAppUserStore } from '@/store/appUserStore.js'
+import Helper from '@/Helpers/Helper.js';
 
 
 export default class Consumer {
@@ -13,7 +15,7 @@ export default class Consumer {
     }
 
     async index() {
-        if(!this.storeManager.isEmpty) return ;
+        if(!this.storeManager.isEmpty) return this.storeManager.all;
         const response = await fetch(this.url, {
             method: 'GET',
             headers: {
@@ -63,7 +65,6 @@ export default class Consumer {
         }
         return msg;
     }
-
 
     async show(id) {
         const response = await fetch(this.url+'/'+id, {

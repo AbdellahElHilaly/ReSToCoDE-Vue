@@ -36,7 +36,6 @@ i{
     overflow-y: scroll;
 }
 
-/* Style the scrollbar */
 .app::-webkit-scrollbar {
     width: 3px;
     background-color: black;

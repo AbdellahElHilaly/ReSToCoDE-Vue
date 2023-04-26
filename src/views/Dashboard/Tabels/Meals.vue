@@ -9,9 +9,8 @@
     import Spinner from "@/components/Layouts/SpinnerView.vue";
     import { useAppSpinnerStore } from '@/store/appSpinnerStore.js'
 
+
     
-
-
     const consumer = new Consumer('meals');
     const consumer_2 = new Consumer('categories');
 
