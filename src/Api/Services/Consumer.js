@@ -15,7 +15,7 @@ export default class Consumer {
     }
 
     async index() {
-        if(!this.storeManager.isEmpty) return this.storeManager.all;
+        if(!this.storeManager.isEmpty())  return this.storeManager.getAll();
         const response = await fetch(this.url, {
             method: 'GET',
             headers: {

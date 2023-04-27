@@ -6,68 +6,98 @@ import { appReservationSore } from '@/store/appReservationSore.js'
 export default class StoreManager {
     constructor(endPoint) {
         this.endPoint = endPoint;
-        this.storeMethods = { // object of objects of functions
-            meals: {
-                setAll: appMealStore().setAll,
-                set: appMealStore().set,
-                isEmpty: appMealStore().isEmpty,
-                add: appMealStore().add,
-                all: appMealStore().getAll,
-            },
-            menus: {
-                setAll: appMenuStore().setAll,
-                set: appMenuStore().set,
-                isEmpty: appMenuStore().isEmpty,
-                add: appMenuStore().add,
-                all: appMenuStore().getAll,
-            },
-            mealsmenus: {
-                setAll: appMenuStore().setAll,
-                set: appMenuStore().set,
-                isEmpty: appMenuStore().isEmpty,
-                add: appMenuStore().add,
-                all: appMenuStore().getAll,
-            },
-            categories: {
-                setAll: appCategoryStore().setAll,
-                set: appCategoryStore().set,
-                isEmpty: appCategoryStore().isEmpty,
-                add: appCategoryStore().add,
-                all: appCategoryStore().getAll,
-            },
-            reservations: {
-                setAll: appReservationSore().setAll,
-                set: appReservationSore().set,
-                isEmpty: appReservationSore().isEmpty,
-                add: appReservationSore().add,
-                all: appReservationSore().getAll,
-            },
-        };
+        
     }
 
+    
     setAll(data) {
-        if (this.storeMethods.hasOwnProperty(this.endPoint)) 
-        this.storeMethods[this.endPoint].setAll(data);
+        switch(this.endPoint) {
+            case 'meals':
+                appMealStore().setAll(data);
+                break;
+            case 'menus':
+                appMenuStore().setAll(data);
+                break;
+            case 'categories':
+                appCategoryStore().setAll(data);
+                break;
+            case 'reservations':
+                appReservationSore().setAll(data);
+                break;
+        }
     }
 
     set(data) {
-        if (this.storeMethods.hasOwnProperty(this.endPoint)) 
-        this.storeMethods[this.endPoint].set(data);
+        switch(this.endPoint) {
+            case 'meals':
+                appMealStore().set(data);
+                break;
+            case 'menus':
+                appMenuStore().set(data);
+                break;
+            case 'categories':
+                appCategoryStore().set(data);
+                break;
+            case 'reservations':
+                appReservationSore().set(data);
+                break;
+        }
     }
 
     isEmpty() {
-        if (this.storeMethods.hasOwnProperty(this.endPoint)) 
-        return this.storeMethods[this.endPoint].isEmpty();
+        switch(this.endPoint) {
+            case 'meals':
+                return appMealStore().isEmpty;
+            case 'menus':
+                return appMenuStore().isEmpty;
+            case 'categories':
+                return appCategoryStore().isEmpty;
+            case 'reservations':
+                return appReservationSore().isEmpty;
+        }
     }
 
     add(data) {
-        if (this.storeMethods.hasOwnProperty(this.endPoint)) 
-        this.storeMethods[this.endPoint].add(data);
+        switch(this.endPoint) {
+            case 'meals':
+                appMealStore().add(data);
+                break;
+            case 'menus':
+                appMenuStore().add(data);
+                break;
+            case 'categories':
+                appCategoryStore().add(data);
+                break;
+            case 'reservations':
+                appReservationSore().add(data);
+                break;
+        }
     }
 
-    all() {
-        if (this.storeMethods.hasOwnProperty(this.endPoint)) 
-        return this.storeMethods[this.endPoint].getAll();
+    getAll() {
+        switch(this.endPoint) {
+            case 'meals':
+                return appMealStore().getAll;
+            case 'menus':
+                return appMenuStore().getAll;
+            case 'categories':
+                return appCategoryStore().getAll;
+            case 'reservations':
+                return appReservationSore().getAll;
+        }
+    }
+
+    get() {
+        switch(this.endPoint) {
+            case 'meals':
+                return appMealStore().get;
+            case 'menus':
+                return appMenuStore().get;
+            case 'categories':
+                return appCategoryStore().get;
+            case 'reservations':
+                return appReservationSore().get;
+        }
     }
 
 }

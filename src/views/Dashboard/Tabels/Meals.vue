@@ -110,7 +110,7 @@
     };
 
 
-    const  confirmDelete = (id) => {
+    const  confirmDelete = (id , index) => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -126,7 +126,7 @@
 
                 if(msg.status){
                     Swal.fire("Deleted!", msg.message, "success");
-                    meals.value.splice(index.value , 1);
+                    meals.value.splice(index, 1);
                 }
                 else
                     Swal.fire("Error!", msg.message, "error");
@@ -282,7 +282,7 @@
                                 <input type="hidden" :value="meal.id" />
                                 <i class="show fas fa-eye" data-mdb-toggle="modal" data-mdb-target="#show-model" @click="index = i"></i>
                                 <i class="edit fas fa-edit" data-mdb-toggle="modal" data-mdb-target="#edit-modal" @click="setEditedMeal(meal)"></i>
-                                <i class="delete fas fa-trash" @click="confirmDelete(meal.id)"></i>
+                                <i class="delete fas fa-trash" @click="confirmDelete(meal.id , i)"></i>
                             </div>
                         </td>
                     </tr>

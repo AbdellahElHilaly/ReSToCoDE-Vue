@@ -39,7 +39,7 @@
 
 
 
-    const  confirmDelete = (id) => {
+    const  confirmDelete = (id, index) => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -55,7 +55,7 @@
 
                 if(msg.status){
                     Swal.fire("Deleted!", msg.message, "success");
-                    menus.value.splice(index.value , 1);
+                    menus.value.splice(index, 1);
                 }
                 else
                     Swal.fire("Error!", msg.message, "error");
@@ -193,7 +193,7 @@
                                     <i class="edit fas fa-edit"></i>
                                 </router-link>
 
-                                <i class="delete fas fa-trash" @click="confirmDelete(meal.id)"></i>
+                                <i class="delete fas fa-trash" @click="confirmDelete(meal.id, i)"></i>
                             </div>
                         </td>
                     </tr>

@@ -32,8 +32,9 @@
 
     <section v-if="menu.id" class="comments-page">
         <Menu :menu="menu" class="mb-2" />
+
         <div class="comments-container">
-            <Comment v-for="comment in appMenuStore().get.comments" :comment="comment" :key="comment.id" />
+            <Comment v-for="comment in appMenuStore().get.comments.slice().reverse()" :comment="comment" :key="comment.id" />
         </div>
         <div class="new-comment">
             <CommentForme/>
