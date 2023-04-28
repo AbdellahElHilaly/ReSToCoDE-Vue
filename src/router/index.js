@@ -120,12 +120,12 @@ const router = createRouter({
         const token = localStorage.getItem(AUTH_TOKEN);
         if (token) {
           const role = await authConsumer.getRole()
-          if (role === 'admin') {
+          if (role === 'admin' || role === 'shef' ) {
             next();
           } else {
             router.push('/');
           }
-        } else {
+          } else {
           router.push('/login');
         }
       }

@@ -168,7 +168,7 @@
 
                 <tbody class="position-relative" v-if="menus.length > 0">
                     <Spinner v-if="useAppSpinnerStore().getStatus == 'meal-crud'" :trenspBackg="true" />
-                    <tr v-bind="meal" v-for="(meal, i) in menus.slice(pag_from, pag_to)" :key="meal.id" > 
+                    <tr v-bind="meal" v-for="(meal, i) in appMenuStore().getAll.slice(pag_from, pag_to)" :key="meal.id" > 
                         <td v-if="!keysInvisible.includes(i)">
                             <div class="d-flex align-items-center ">
                                 <img :src="meal.image" alt="" style="width: 45px; height: 45px" class="meal-image" />

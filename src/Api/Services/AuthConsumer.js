@@ -224,6 +224,7 @@ export default class AuthConsumer {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${this.token}`,
+
             },
             body: JSON.stringify(userData),
         });

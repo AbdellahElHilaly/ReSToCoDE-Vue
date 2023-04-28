@@ -3,6 +3,7 @@ import  StoreManager from '@/Helpers/StoreManager.js';
 import router from '@/router';
 import { useAppUserStore } from '@/store/appUserStore.js'
 import Helper from '@/Helpers/Helper.js';
+import { appMenuStore } from '@/store/appMenuStore.js';
 
 
 export default class Consumer {
@@ -46,7 +47,6 @@ export default class Consumer {
         });
     
         const result = await response.json();
-        console.log(result);
         let msg = {
                 'message' : result.message,
                 'status' : false,

@@ -18,6 +18,9 @@ export default class StoreManager {
             case 'menus':
                 appMenuStore().setAll(data);
                 break;
+            case 'mealsmenus':
+                appMenuStore().setAll(data);
+                break;
             case 'categories':
                 appCategoryStore().setAll(data);
                 break;
@@ -35,6 +38,9 @@ export default class StoreManager {
             case 'menus':
                 appMenuStore().set(data);
                 break;
+            case 'mealsmenus':
+                appMenuStore().set(data);
+                break;
             case 'categories':
                 appCategoryStore().set(data);
                 break;
@@ -50,6 +56,8 @@ export default class StoreManager {
                 return appMealStore().isEmpty;
             case 'menus':
                 return appMenuStore().isEmpty;
+            case 'mealsmenus':
+                return appMenuStore().isEmpty;
             case 'categories':
                 return appCategoryStore().isEmpty;
             case 'reservations':
@@ -63,6 +71,9 @@ export default class StoreManager {
                 appMealStore().add(data);
                 break;
             case 'menus':
+                appMenuStore().add(data);
+                break;
+            case 'mealsmenus':
                 appMenuStore().add(data);
                 break;
             case 'categories':
@@ -80,6 +91,8 @@ export default class StoreManager {
                 return appMealStore().getAll;
             case 'menus':
                 return appMenuStore().getAll;
+            case 'mealsmenus':
+                return appMenuStore().getAll;
             case 'categories':
                 return appCategoryStore().getAll;
             case 'reservations':
@@ -92,6 +105,8 @@ export default class StoreManager {
             case 'meals':
                 return appMealStore().get;
             case 'menus':
+                return appMenuStore().get;
+            case 'mealsmenus':
                 return appMenuStore().get;
             case 'categories':
                 return appCategoryStore().get;
